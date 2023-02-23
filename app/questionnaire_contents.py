@@ -1,22 +1,66 @@
 # Allianz v2.0
 
 import numpy as np
+import pandas as pd
 
 class Contenter:
 
     def __init__(self) -> None:
             
-        pass
+        self.MIFID_2018_columns =[
+            'ETA', 'SESSO_B', 'PROV_T', 'PROFESSIONE_S', 'TAE_T', 'CAP_S',
+            'VAL_DOMANDA_S1_1', 'VAL_DOMANDA_S1_2', 'VAL_DOMANDA_S1_3',
+            'VAL_DOMANDA_S1_4', 'VAL_DOMANDA_S2_5A_1', 'VAL_DOMANDA_S2_5A_2',
+            'VAL_DOMANDA_S2_5A_3', 'VAL_DOMANDA_S2_5A_4', 'VAL_DOMANDA_S2_5A_5',
+            'VAL_DOMANDA_S2_5A_6', 'VAL_DOMANDA_S2_5A_7', 'VAL_DOMANDA_S2_5A_8',
+            'VAL_DOMANDA_S2_5A_9', 'VAL_DOMANDA_S2_5A_10', 'VAL_DOMANDA_S2_5A_11',
+            'VAL_DOMANDA_S2_5A_12', 'VAL_DOMANDA_S2_5B_1', 'VAL_DOMANDA_S2_5B_2',
+            'VAL_DOMANDA_S2_5B_3', 'VAL_DOMANDA_S2_5B_4', 'VAL_DOMANDA_S2_5B_5',
+            'VAL_DOMANDA_S2_5B_6', 'VAL_DOMANDA_S2_5B_7', 'VAL_DOMANDA_S2_5B_8',
+            'VAL_DOMANDA_S2_5B_9', 'VAL_DOMANDA_S2_5B_10', 'VAL_DOMANDA_S2_5B_11',
+            'VAL_DOMANDA_S2_5B_12', 'VAL_DOMANDA_S2_6_1', 'VAL_DOMANDA_S2_6_2',
+            'VAL_DOMANDA_S2_6_3', 'VAL_DOMANDA_S2_6_4',  'VAL_DOMANDA_S2_7', 
+            'VAL_DOMANDA_S2_8', 'VAL_DOMANDA_S3_9', 'VAL_DOMANDA_S3_10',
+            'VAL_DOMANDA_S3_11', 'VAL_DOMANDA_S3_12', 'VAL_DOMANDA_S4_13_1', 
+            'VAL_DOMANDA_S4_13_2', 'VAL_DOMANDA_S4_13_3', 'VAL_DOMANDA_S4_14_1',
+            'VAL_DOMANDA_S4_14_2', 'VAL_DOMANDA_S4_14_3',
+            'VAL_DOMANDA_S4_14_4', 'VAL_DOMANDA_S4_15', 
+        ]
+        self.MIFID_2020_columns = [
+            'NASCITA_FIGLIO_1_MU20', 
+            'NASCITA_FIGLIO_2_MU20',
+            'NASCITA_FIGLIO_3_MU20', 
+            'NASCITA_FIGLIO_4_MU20',
+            'NASCITA_FIGLIO_5_MU20', 
+            'NASCITA_FIGLIO_6_MU20',
+            'VAL_DOMANDA_S2_7_MU20',
+            'VAL_DOMANDA_S2_8_MU20', 
+            'VAL_DOMANDA_S2_9_MU20',
+            'VAL_DOMANDA_S2_10_MU20'
+            'VAL_DOMANDA_S4_13_1', 
+            'VAL_DOMANDA_S4_13_2', 
+            'VAL_DOMANDA_S4_13_3',
+            'VAL_DOMANDA_S4_17_4_MU20', 
+            'VAL_DOMANDA_S4_17_5_MU20', 
+            'VAL_DOMANDA_S4_18_MU20'
+        ]
+        self.MIFID_2022_columns = [
+            "VAL_DOMANDA_S5_21_MU22",
+            "VAL_DOMANDA_S5_22_MU22",
+            "VAL_DOMANDA_S5_23_MU22"
+        ]
 
 
 # 1) socio demographics:
 
-    def v1_ordinal_age(self, person:dict):
+    def v1_ordinal_age(self, external_df:pd.DataFrame):
+
+        df = external_df
 
         ##### overall info
         column = "ETA"
 
-        array = person[column]
+        array = external_df[column]
         
         max = 120
 
@@ -24,49 +68,61 @@ class Contenter:
 
         return max, array
 
-    def v1_categorical_gender(self, person:dict):
+    def v1_categorical_gender(self, external_df:pd.DataFrame) -> pd.Series:
 
         ##### overall info
         column = "SESSO_B"
         
-        replacements = {
+        gender_map = {
             'FEMMINILE': "f",
-            'MASCHILE': "m",
-            "" : "f"
+            'MASCHILE': "m"
         }
-        array = replacements[person[column]]
+        array = external_df[column].map(gender_map)
 
         return array
 
-    def v1_categorical_profession(self, person:dict):
+    def v1_categorical_profession(self, external_df:pd.DataFrame) -> pd.Series:
 
         ##### overall info
         column = "PROFESSIONE_S"
 
-        replacements = {
-            '01 DIRIGENTE' : "lavoratore dipendente",
-            '02 IMPRENDITORE' : "lavoratore indipendente",
-            '03 LAVORATORE AUTONOMO' : "lavoratore indipendente",
-            '04 LIBERO PROFESSIONISTA' : "lavoratore indipendente",
-            '05 PENSIONATO' : "pensionato",
-            '06 LAV. DIPENDENTE A TEMPO DETERMINATO' : "lavoratore dipendente",
-            '07 LAV. DIPENDENTE A TEMPO INDETERMINATO' : "lavoratore dipendente",
-            '08 NON OCCUPATO (STUDENTI/CASALINGHE)' : "non occupato",
-            "" : "non occupato"
-        }
+        array = external_df[column]
 
-        array = replacements[person[column]]
+        replacements = {
+            '01 DIRIGENTE' : "DIRIGENTE",
+            '02 IMPRENDITORE' : "IMPRENDITORE",
+            '03 LAVORATORE AUTONOMO' : "LAVORATORE_AUTONOMO",
+            '04 LIBERO PROFESSIONISTA' : "LIBERO_PROFESSIONISTA",
+            '05 PENSIONATO' : "PENSIONATO",
+            '06 LAV. DIPENDENTE A TEMPO DETERMINATO' : "DIPENDENTE_DETERMINATO",
+            '07 LAV. DIPENDENTE A TEMPO INDETERMINATO' : "DIPENDENTE_INDETERMINATO",
+            '08 NON OCCUPATO (STUDENTI/CASALINGHE)' : "NON_OCCUPATO"
+        }
+        profession_map = {
+            'DIRIGENTE' : "lavoratore dipendente",
+            'IMPRENDITORE' : "lavoratore indipendente",
+            'LAVORATORE_AUTONOMO' : "lavoratore indipendente",
+            'LIBERO_PROFESSIONISTA' : "lavoratore indipendente",
+            'PENSIONATO' : "pensionato",
+            'DIPENDENTE_DETERMINATO' : "lavoratore dipendente",
+            'DIPENDENTE_INDETERMINATO' : "lavoratore dipendente",
+            'NON_OCCUPATO' : "non occupato"
+        }
+        
+        array = array.map(replacements).map(profession_map)
 
         return array
     
-    def v1_categorical_location_region(self, person:dict):
+    def v1_categorical_location_region(self, external_df:pd.DataFrame) -> pd.Series:
 
         ##### overall info
         column = "PROV_T"
 
+        array = external_df[column]
+
         replacements = {
  
-            'AO' : "valle daosta",
+            'AO' : "aosta",
 
             'TO' : "piemonte", 
             'NO' : "piemonte", 
@@ -77,7 +133,6 @@ class Contenter:
             'BI' : "piemonte",
             'CN' : "piemonte", 
 
-            'LC' : "lombardia",
             'LO' : "lombardia", 
             'CO' : "lombardia", 
             'MI' : "lombardia",
@@ -187,31 +242,30 @@ class Contenter:
             'TP' : "sicilia", 
             'AG' : "sicilia", 
 
-            'CA' : "sardegna",
-            'SS' : "sardegna",
-            'SU' : "sardegna",
-            'OT' : "sardegna",
-            'NU' : "sardegna",
-            'OR' : "sardegna",
-            'OG' : "sardegna", 
-            'CI' : "sardegna", 
+            'CA' : "sardinia",
+            'SS' : "sardinia",
+            'SU' : "sardinia",
+            'OT' : "sardinia",
+            'NU' : "sardinia",
+            'OR' : "sardinia",
+            'OG' : "sardinia", 
+            'CI' : "sardinia", 
 
             'EE' : "lombardia", 
             'ZH' : "lombardia", 
             'UK' : "lombardia"
         }
 
-        if person[column] in replacements.keys():
-            array = replacements[person[column]]
-        else:
-            array = "lombardia"
-            
-        return array
+        array = array.map(replacements)
 
-    def v1_categorical_education(self, person:dict):
+        return array.fillna("lombardia")
+
+    def v1_categorical_education(self, external_df:pd.DataFrame) -> pd.Series:
 
         ##### overall info
         column = "VAL_DOMANDA_S1_4"
+
+        array = external_df[column]
 
         values = {
             "1.4.1" : "A. Diploma",
@@ -221,23 +275,31 @@ class Contenter:
         }
 
         replacements = {
-            '1.4.1': "scuola secondaria di II grado",
-            '1.4.2': "istruzione superiore università",
-            '1.4.3': "master di II livello e PHD",
-            '1.4.4': "scuola primaria",
-            '' : "scuola primaria"
+            '1.4.1': "diploma",
+            '1.4.2': "laurea",
+            '1.4.3': "laura_economica",
+            '1.4.4': "elementari"
         }
 
-        array = replacements[person[column]]
+        education_map = {
+            'diploma': "scuola secondaria di II grado",
+            'laurea': "istruzione superiore università",
+            'laura_economica': "istruzione superiore università",
+            'elementari': "scuola primaria"
+        }
+
+        array = array.map(replacements).map(education_map)
 
         return array
 
 
 # 2) family status:
 
-    def v1_categorical_houses_count(self, person:dict):
+    def v1_categorical_houses_count(self, external_df:pd.DataFrame) -> pd.Series:
 
         column = "VAL_DOMANDA_S3_11"
+
+        array = external_df[column]
 
         values = {
             "3.11.1" : "A. Non possiedo immobili",
@@ -254,17 +316,19 @@ class Contenter:
             '3.11.3': "more_houses",
             '3.11.11': "zero_houses",
             '3.11.12': "one_house",
-            '3.11.13': "more_houses"
+            '3.11.13': "more_houses",
         }
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
 
         return array
     
-    def v1_categorical_marital_status(self, person:dict):
+    def v1_categorical_marital_status(self, external_df:pd.DataFrame) -> pd.Series:
 
         ##### overall info
         column = "VAL_DOMANDA_S1_1"
+
+        array = external_df[column]
 
         values = {
             "1.1.1" : "A. Nubile/celibe",
@@ -280,14 +344,16 @@ class Contenter:
             '1.1.4': "Vedovo"
         }   
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
         
         return array
 
-    def v1_ordinal_childrens_count(self, person:dict):
+    def v1_ordinal_childrens_count(self, external_df:pd.DataFrame):
 
         ##### overall info
         column = "VAL_DOMANDA_S1_2"
+
+        array = external_df[column]
 
         values = {
             "1.2.1" : "A. No",
@@ -305,16 +371,18 @@ class Contenter:
 
         max = 4
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
 
         array = array / max
 
         return max, array
 
-    def v1_ordinal_dependents_count(self, person:dict):
+    def v1_ordinal_dependents_count(self, external_df:pd.DataFrame):
 
         ##### overall info
         column = "VAL_DOMANDA_S1_3"
+
+        array = external_df[column]
 
         values = {
             "1.3.1" : "A. Sì, una persona",
@@ -332,7 +400,7 @@ class Contenter:
         
         max = 3
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
 
         array = array / max
         
@@ -351,10 +419,12 @@ class Contenter:
 
 # 3) financial status:
 
-    def v1_ordinal_yearly_ctv(self, person:dict):
+    def v1_ordinal_yearly_ctv(self, external_df:pd.DataFrame):
         
         ##### overall info
         column = "VAL_DOMANDA_S2_7"
+
+        array = external_df[column]
 
         values = {
             "2.7.1" : "A. Minore di 50.000 Euro in 3 anni",
@@ -376,16 +446,18 @@ class Contenter:
             '2.7.4': 0
         }  
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
         
         array = array / max
         
         return max, array
 
-    def v1_ordinal_yearly_income(self, person:dict):
+    def v1_ordinal_yearly_income(self, external_df:pd.DataFrame):
         
         ##### overall info
         column = "VAL_DOMANDA_S3_9"
+        
+        array = external_df[column]
 
         values = {
             "3.9.1" : "A. Fino a 100.000 Euro",
@@ -418,16 +490,18 @@ class Contenter:
             '3.9.14': bins_2[3],
         }
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
         
         array = array / max_2
 
         return max_2, array
 
-    def v1_ordinal_out_aum(self, person:dict):
+    def v1_ordinal_out_aum(self, external_df:pd.DataFrame):
 
         ##### overall info
         column = "VAL_DOMANDA_S3_10"
+
+        array = external_df[column]
 
         values = {
             "3.10.1" : "A. Non detengo nulla presso altri intermediari",
@@ -462,16 +536,18 @@ class Contenter:
             '3.10.15': bins[4],
         }
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
         
         array = array / max
 
         return max, array
 
-    def v1_ordinal_yearly_liabilities(self, person:dict):
+    def v1_ordinal_yearly_liabilities(self, external_df:pd.DataFrame):
 
         column = "VAL_DOMANDA_S3_12"
         
+        array = external_df[column]
+
         values = {
             "3.12.1" : "A. Nulla, non ho impegni finanziari regolari",
             "3.12.2" : "B. Bassa (meno del 10%)",
@@ -492,9 +568,9 @@ class Contenter:
             "3.12.4": bins[2]
         }  
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
 
-        max_income, array2 = self.v1_ordinal_yearly_income(person=person)
+        max_income, array2 = self.v1_ordinal_yearly_income(external_df)
 
         # max
 
@@ -505,7 +581,7 @@ class Contenter:
 
 # 4) financial culture:
 
-    def v1_ordinal_financial_knowledge(self, person:dict):
+    def v1_ordinal_financial_knowledge(self, external_df:pd.DataFrame):
 
         ##### overall info
         columns = [
@@ -517,6 +593,8 @@ class Contenter:
             "VAL_DOMANDA_S2_5A_11", "VAL_DOMANDA_S2_5A_12"
             ]
 
+        df = external_df[columns]
+
         values = {
             "S" : "SI",
             "N" : "NO"
@@ -533,17 +611,16 @@ class Contenter:
             'N': bins[0]
         }
 
-        sum = 0
         for column in columns:
-            sum += replacements[person[column]]
+            df[column] = df[column].map(replacements)
         
         max = len(columns)
 
-        array = sum / max
+        array = df[columns].sum(numeric_only=True, axis=1)/max
         
         return max, array
 
-    def v1_ordinal_financial_experience(self, person:dict):
+    def v1_ordinal_financial_experience(self, external_df:pd.DataFrame):
 
         ##### overall info
         columns = [
@@ -555,10 +632,13 @@ class Contenter:
             "VAL_DOMANDA_S2_5B_11", "VAL_DOMANDA_S2_5B_12"
             ]
 
+        df = external_df[columns]
+
         values = {
             "S" : "SI",
             "N" : "NO"
         }
+
 
         ##### map
 
@@ -571,17 +651,16 @@ class Contenter:
             'N': bins[0]
         }
 
-        sum = 0
         for column in columns:
-            sum += replacements[person[column]]
-        
+            df[column] = df[column].map(replacements)
+
         max = len(columns)
 
-        array = sum / max
-        
+        array = df[columns].sum(numeric_only=True, axis=1)/max
+
         return max, array
 
-    def v1_ordinal_correct_financial_answers(self, person:dict):
+    def v1_ordinal_correct_financial_answers(self, external_df:pd.DataFrame):
 
         ##### overall info
         columns = [
@@ -589,16 +668,18 @@ class Contenter:
             "VAL_DOMANDA_S2_6_3", "VAL_DOMANDA_S2_6_4"
             ]
 
+        df = external_df[columns]
+
         values = {
             "A" : "ALTO",
             "B" : "BASSO"
         }
         
         true_answers = {
-            "VAL_DOMANDA_S2_6_1" : 1,
-            "VAL_DOMANDA_S2_6_2" : 0,
-            "VAL_DOMANDA_S2_6_3" : 0,
-            "VAL_DOMANDA_S2_6_4" : 1
+            "VAL_DOMANDA_S2_6_1" : "1",
+            "VAL_DOMANDA_S2_6_2" : "0",
+            "VAL_DOMANDA_S2_6_3" : "0",
+            "VAL_DOMANDA_S2_6_4" : "1"
         }
 
         ##### map
@@ -612,22 +693,40 @@ class Contenter:
             'B': bins[0]
         }
 
-        rating = 0
-        for que, ans in true_answers.items():
+        for column in columns:
+            df[column] = df[column].map(replacements)
+
+        ##### check
+        df = df.assign(rating=0)
+        for idx, row in df.iterrows():
             
-            if replacements[person[que]] == ans:
+            rating = 0
+            if df.loc[idx, columns[0]] == true_answers[columns[0]] : 
+                rating += 1
+            
+            if df.loc[idx, columns[1]] == true_answers[columns[1]] : 
                 rating += 1
 
-        max = len(true_answers.keys())
+            if df.loc[idx, columns[2]] == true_answers[columns[2]] : 
+                rating += 1
 
-        array = rating / max
+            if df.loc[idx, columns[3]] == true_answers[columns[3]] : 
+                rating += 1
+            
+            df.loc[idx, "rating"] = rating
+
+        max = len(columns)
+
+        array = df["rating"] / max
 
         return max, array
 
-    def v1_ordinal_yearly_trading_frequency(self, person:dict):
+    def v1_ordinal_yearly_trading_frequency(self, external_df:pd.DataFrame):
 
         ##### overall info
         column = "VAL_DOMANDA_S2_8"
+
+        array = external_df[column]
 
         values = {
             "2.8.1" : "A. Minore di 6 in tre anni",
@@ -638,8 +737,8 @@ class Contenter:
 
         # considering mid-bins 
         bin_size = 3
+        max = 30
         years = 3
-        max = 30 / years
         bins = [round(3/years), round(10/years), round(22.5/years)]
  
         replacements = {
@@ -649,11 +748,13 @@ class Contenter:
             '2.8.4': 0
         }
 
-        array = replacements[person[column]] / max
+        max = max / years
+        array = array.map(replacements)
+        array = array / max
 
         return max, array
     
-    def v1_ordinal_subjective_time_horizon(self, person:dict):
+    def v1_ordinal_subjective_time_horizon(self, external_df:pd.DataFrame):
 
         ##### overall info
         note = "percentuale dichiarata per orizzonte fino a 1 anno, 3 anni, 5 anni, e più di 5"
@@ -662,6 +763,9 @@ class Contenter:
             'VAL_DOMANDA_S4_14_1', 'VAL_DOMANDA_S4_14_2', 
             'VAL_DOMANDA_S4_14_3', 'VAL_DOMANDA_S4_14_4'
         ]
+
+        ##### initiate
+        df = external_df[columns]
 
         ##### map
 
@@ -673,23 +777,27 @@ class Contenter:
         ##### max 
         values = bins
         
-        weights = []
-
-        for column in columns:
+        df = df.assign(result=0)
+        for idx, row in df.iterrows():
             
-            weights.append(person[column])
+            weights = []
 
-        weights = np.array(weights, dtype=float)
-        result = np.dot(weights, values)
+            for column in columns:
+                
+                weights.append(df.loc[idx, column])
 
-        array = result / max_horizon
+            df.loc[idx, "result"] = np.dot(weights, values)
+
+        array = df["result"] / max_horizon
 
         return max_horizon, array
 
-    def v1_ordinal_subjective_risk(self, person:dict):
+    def v1_ordinal_subjective_risk(self, external_df:pd.DataFrame):
 
         column = 'VAL_DOMANDA_S4_15'
 
+        array = external_df[column]
+        
         values = {
             "4.15.1" : "A. Disinvestirei immediatamente perché non sarei disposto ad accettare ulteriori perdite",
             "4.15.2" : "B. Manterrei l'investimento in attesa che recuperi il valore prima di vendere",
@@ -709,17 +817,19 @@ class Contenter:
             "4.15.4": bins[3]
         }  
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
 
         return max, array
 
-    def v1_bool_sophisticated_instrument_presence(self, person:dict):
+    def v1_bool_sophisticated_instrument_presence(self, external_df:pd.DataFrame):
 
         # map
         columns = [
             "VAL_DOMANDA_S2_5A_10", "VAL_DOMANDA_S2_5A_11", "VAL_DOMANDA_S2_5A_12"
             ]
 
+        df = external_df[columns]
+        
         values = {
             "S" : "SI",
             "N" : "NO"
@@ -738,51 +848,61 @@ class Contenter:
         }
 
         for column in columns:
-            if replacements[person[column]] == 1:
-                result = 1
-            else:
-                result = 0
+            df[column] = df[column].map(replacements)
 
-        return result
+        ##### check
+        df = df.assign(result=0)
+        for idx, row in df.iterrows():
+            for column in columns:
+                if df.loc[idx, column] == 1:
+                    df.loc[idx, "result"] = 1
+                    break
 
-    def v1_ordinal_objective_time_horizon(self, person:dict):
+        return df["result"]
+
+    def v1_ordinal_objective_time_horizon(self, external_df:pd.DataFrame) -> pd.DataFrame:
         
-        max, liquidity = self.v1_ordinal_subjective_liquidity_investment_need(person=person)
-        max, capital = self.v1_ordinal_subjective_capital_accumulation_investment_need(person=person)
-        max, retirement = self.v1_ordinal_subjective_retirement_investment_need(person=person)
+        df = pd.DataFrame()
+        
+        max, df["liquidity"] = self.v1_ordinal_subjective_liquidity_investment_need(external_df)
+        max, df["capital"] = self.v1_ordinal_subjective_capital_accumulation_investment_need(external_df)
+        max, df["retirement"] = self.v1_ordinal_subjective_retirement_investment_need(external_df)
 
         max_time = 10
         bins = [1, 3, 5, 10]
+        
+        df = df.assign(result=0)
+        for idx, row in df.iterrows():
 
-        if capital > 0.5:
-            
-            if retirement > 0.5: horizon = bins[3]
-            elif retirement > 0: horizon = bins[2]
-            elif retirement == 0: horizon = bins[1]
+            if df.loc[idx, "capital"] > 0.5:
+                
+                if df.loc[idx, "retirement"] > 0.5: horizon = bins[3]
+                elif df.loc[idx, "retirement"] > 0: horizon = bins[2]
+                elif df.loc[idx, "retirement"] == 0: horizon = bins[1]
 
-        elif capital > 0:
+            elif df.loc[idx, "capital"] > 0:
 
-            if retirement > 0.5: horizon = bins[2]
-            elif retirement > 0: horizon = bins[1]
-            elif retirement == 0: horizon = bins[1]
+                if df.loc[idx, "retirement"] > 0.5: horizon = bins[2]
+                elif df.loc[idx, "retirement"] > 0: horizon = bins[1]
+                elif df.loc[idx, "retirement"] == 0: horizon = bins[1]
 
-        elif capital == 0:
+            elif df.loc[idx, "capital"] == 0:
 
-            if retirement > 0.5: horizon = bins[2]
-            elif retirement > 0: horizon = bins[1]
-            elif retirement == 0: 
-    
-                if liquidity > 0.5: horizon = bins[2]
-                elif liquidity > 0: horizon = bins[1]
-                elif liquidity > 0: horizon = 0
+                if df.loc[idx, "retirement"] > 0.5: horizon = bins[2]
+                elif df.loc[idx, "retirement"] > 0: horizon = bins[1]
+                elif df.loc[idx, "retirement"] == 0: 
+        
+                    if df.loc[idx, "liquidity"] > 0.5: horizon = bins[2]
+                    elif df.loc[idx, "liquidity"] > 0: horizon = bins[1]
+                    elif df.loc[idx, "liquidity"] > 0: horizon = 0
 
-        result = horizon
+            df.loc[idx, "result"] = horizon
 
-        array = result / max_time
+        array = df["result"] / max_time
 
         return max_time, array
 
-    def v2_ordinal_correct_financial_answers(self, person:dict):
+    def v2_ordinal_correct_financial_answers(self, external_df:pd.DataFrame):
 
 
         ##### overall info
@@ -792,6 +912,8 @@ class Contenter:
             'VAL_DOMANDA_S2_9_MU20',
             'VAL_DOMANDA_S2_10_MU20'
         ]
+
+        df = external_df[columns]
 
         replacements = {
             "2.9.1" : "A",
@@ -817,16 +939,32 @@ class Contenter:
         
         ##### map
 
-        rating = 0
-        for que, ans in true_answers.items():
+        for column in columns:
+            df[column] = df[column].map(replacements)
+
+        ##### check
+        df = df.assign(rating=0)
+        for idx, row in df.iterrows():
             
-            if replacements[person[que]] == ans:
+            rating = 0
+            if df.loc[idx, columns[0]] == true_answers[columns[0]] : 
+                rating += 1
+            
+            if df.loc[idx, columns[1]] == true_answers[columns[1]] : 
                 rating += 1
 
-        max = len(true_answers.keys())
+            if df.loc[idx, columns[2]] == true_answers[columns[2]] : 
+                rating += 1
 
-        array = rating / max
+            if df.loc[idx, columns[3]] == true_answers[columns[3]] : 
+                rating += 1
+            
+            df.loc[idx, "rating"] = rating
 
+        max = len(columns)
+
+        array = df["rating"]/max
+        
         return max, array
 
 
@@ -834,10 +972,12 @@ class Contenter:
         
     # 5_1) investments:
 
-    def v1_ordinal_subjective_liquidity_investment_need(self, person:dict):
+    def v1_ordinal_subjective_liquidity_investment_need(self, external_df:pd.DataFrame):
 
         column = "VAL_DOMANDA_S4_13_1"
 
+        array = external_df[column]
+
         values = {
             "P" : "Principale",
             "I" : "Secondaria",
@@ -857,14 +997,16 @@ class Contenter:
             'N': 0,
         }
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
 
         return max, array
 
-    def v1_ordinal_subjective_capital_accumulation_investment_need(self, person:dict):
+    def v1_ordinal_subjective_capital_accumulation_investment_need(self, external_df:pd.DataFrame):
 
         column = "VAL_DOMANDA_S4_13_2"
         
+        array = external_df[column]
+
         values = {
             "P" : "Principale",
             "I" : "Secondaria",
@@ -884,14 +1026,16 @@ class Contenter:
             'N': 0,
         }
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
         
         return max, array
 
-    def v1_ordinal_subjective_income_investment_need(self, person:dict):
+    def v1_ordinal_subjective_income_investment_need(self, external_df:pd.DataFrame):
 
         column = "VAL_DOMANDA_S4_13_2"
 
+        array = external_df[column]
+
         values = {
             "P" : "Principale",
             "I" : "Secondaria",
@@ -911,14 +1055,16 @@ class Contenter:
             'N': 0,
         }
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
         
         return max, array
 
-    def v1_ordinal_subjective_retirement_investment_need(self, person:dict):
+    def v1_ordinal_subjective_retirement_investment_need(self, external_df:pd.DataFrame):
 
         column = "VAL_DOMANDA_S4_13_3"
 
+        array = external_df[column]
+
         values = {
             "P" : "Principale",
             "I" : "Secondaria",
@@ -938,13 +1084,15 @@ class Contenter:
             'N': 0,
         }
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
         
         return max, array
 
-    def v2_ordinal_subjective_liquidity_investment_need(self, person:dict):
+    def v2_ordinal_subjective_liquidity_investment_need(self, external_df:pd.DataFrame):
 
         column = "VAL_DOMANDA_S4_13_1"
+        
+        array = external_df[column]
 
         values = {
             "P" : "Principale",
@@ -965,16 +1113,18 @@ class Contenter:
             'N': 0,
         }
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
 
         array = array / max
         
         return max, array
 
-    def v2_ordinal_subjective_capital_accumulation_investment_need(self, person:dict):
+    def v2_ordinal_subjective_capital_accumulation_investment_need(self, external_df:pd.DataFrame):
 
         columns = ["VAL_DOMANDA_S4_13_2", "VAL_DOMANDA_S4_17_5_MU20"]
 
+        df = external_df[columns]
+
         values = {
             "P" : "Principale",
             "I" : "Secondaria",
@@ -994,20 +1144,22 @@ class Contenter:
             'N': 0,
         }
 
-        sum = 0
         for column in columns:
-            sum += replacements[person[column]]
+            df[column].map(replacements)
         
-        max = len(columns)
 
-        array = sum / max
-        
+        array = df[columns].sum(numeric_only=True, axis=1)
+
+        array = array / max
+
         return max, array
 
-    def v2_ordinal_subjective_income_investment_need(self, person:dict):
+    def v2_ordinal_subjective_income_investment_need(self, external_df:pd.DataFrame):
 
         column = "VAL_DOMANDA_S4_13_3"
 
+        array = external_df[column]
+
         values = {
             "P" : "Principale",
             "I" : "Secondaria",
@@ -1027,16 +1179,18 @@ class Contenter:
             'N': 0,
         }
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
 
         array = array / max
         
         return max, array
 
-    def v2_ordinal_subjective_capital_protection_investment_need(self, person:dict):
+    def v2_ordinal_subjective_capital_protection_investment_need(self, external_df:pd.DataFrame):
 
         column = "VAL_DOMANDA_S4_17_4_MU20"
 
+        array = external_df[column]
+
         values = {
             "P" : "Principale",
             "I" : "Secondaria",
@@ -1056,15 +1210,17 @@ class Contenter:
             'N': 0,
         }
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
 
         array = array / max
         
         return max, array
 
-    def v2_ordinal_subjective_retirement_investment_need(self, person:dict):
+    def v2_ordinal_subjective_retirement_investment_need(self, external_df:pd.DataFrame):
 
         column = "VAL_DOMANDA_S4_17_5_MU20"
+
+        array = external_df[column]
 
         values = {
             "P" : "Principale",
@@ -1085,7 +1241,7 @@ class Contenter:
             'N': 0,
         }
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
 
         array = array / max
         
@@ -1094,10 +1250,12 @@ class Contenter:
 
     # 6) personal culture:
 
-    def v3_bool_declared_esg_propensity(self, person:dict):
+    def v3_bool_declared_esg_propensity(self, external_df:pd.DataFrame) -> pd.DataFrame:
 
 
         column = "VAL_DOMANDA_S5_21_MU22"
+
+        array = external_df[column]
 
         values = {
             "A" : "A. Si, sono interessato",
@@ -1106,18 +1264,20 @@ class Contenter:
 
         # map
         # keys to be modified
-        replacements = {
+        mappa = {
             "A" : 1,
             "B" : 0
         }
 
-        array = replacements[person[column]]
+        array = array.map(mappa)
         
         return array
 
-    def v3_nominal_declared_esg_propensity(self, person:dict):
+    def v3_nominal_declared_esg_propensity(self, external_df:pd.DataFrame) -> pd.DataFrame:
 
         column = "VAL_DOMANDA_S5_22_MU22"
+
+        array = external_df[column]
 
         values = {
             "A" : "A. In misura almeno pari al 10%",
@@ -1140,14 +1300,16 @@ class Contenter:
 
         max = 1
 
-        array = replacements[person[column]]
+        array = array.map(replacements)
         
         return max, array
 
-    def v3_bool_evironment_propensity_index(self, person:dict):
+    def v3_bool_evironment_propensity_index(self, external_df:pd.DataFrame) -> pd.DataFrame:
         
         # first look
         column = "VAL_DOMANDA_S5_23_MU22"
+
+        array = external_df[column]
 
         # map
         values = {
@@ -1163,17 +1325,26 @@ class Contenter:
             "C" : "C"
         }
 
-        if replacements[person[column]] == "A":
-            rating = 1
-        else:
-            rating = 0
+        array = array.map(replacements)
 
-        return rating
+        # check
 
-    def v3_bool_social_propensity_index(self, person:dict):
+        for idx, val in array.items():
+            
+            if val == "A":
+                array.loc[idx] = 1
+
+            else:
+                array.loc[idx] = 0
+
+        return array
+
+    def v3_bool_social_propensity_index(self, external_df:pd.DataFrame) -> pd.DataFrame:
         
         # first look
         column = "VAL_DOMANDA_S5_23_MU22"
+
+        array = external_df[column]
 
         # map 
         values = {
@@ -1188,18 +1359,26 @@ class Contenter:
             "B" : "B",
             "C" : "C"
         }
+        array = array.map(replacements)
 
-        if replacements[person[column]] == "B":
-            rating = 1
-        else:
-            rating = 0
+        # check
 
-        return rating
+        for idx, val in array.items():
 
-    def v3_bool_governance_propensity_index(self, person:dict):
+            if val == "B":
+                array.loc[idx] = 1
+
+            else:
+                array.loc[idx] = 0
+
+        return array
+
+    def v3_bool_governance_propensity_index(self, external_df:pd.DataFrame) -> pd.DataFrame:
         
         # first look
         column = "VAL_DOMANDA_S5_23_MU22"
+
+        array = external_df[column]
 
         # map
         values = {
@@ -1214,13 +1393,19 @@ class Contenter:
             "B" : "B",
             "C" : "C"
         }
-        
-        if replacements[person[column]] == "B":
-            rating = 1
-        else:
-            rating = 0
+        array = array.map(replacements)
 
-        return rating
+        # check
+
+        for idx, val in array.items():
+
+            if val == "B":
+                array.loc[idx] = 1
+
+            else:
+                array.loc[idx] = 0
+
+        return array
 
 
         

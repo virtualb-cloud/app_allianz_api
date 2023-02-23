@@ -1,6 +1,7 @@
 # Allianz v2.0
 
 import numpy as np
+import pandas as pd
 from app.questionnaire_contents import Contenter
 
 class Observer:
@@ -11,22 +12,22 @@ class Observer:
 
 # 1) socio demographics:
 
-    def v1_employment_uncertainty_index(self, person:dict):
+    def v1_employment_uncertainty_index(self, external_df:pd.DataFrame) -> pd.Series:
 
-        job = self.contenter.v1_categorical_profession(person=person)
+        df = pd.DataFrame()
 
-        uncertains = ["non occupato", "lavoratore dipendente"]
+        df["jobs"] = self.contenter.v1_categorical_profession(external_df)
+
+        uncertains = ["NON_OCCUPATO", "DIPENDENTE_DETERMINATO"]
+        df["uncertain"] = df["jobs"].apply(lambda x: 1 if x in uncertains else 0)
         
-        if job in uncertains:
-            flag = 1
-        else:
-            flag = 0
-        
-        return flag
+        return df[["uncertain"]]
 
-    def v1_house_robbery_index(self, person:dict):
+    def v1_house_robbery_index(self, external_df:pd.DataFrame) -> pd.Series:
 
-        province = person["PROV_T"]
+        df = pd.DataFrame()
+
+        df["province"] = external_df["PROV_T"]
         
         house_robbery_index = {
 
@@ -145,45 +146,48 @@ class Observer:
             'VAT': 0.76097,
             'SU': 0.03485}
         
-        if province in house_robbery_index.keys():
-            hri = house_robbery_index[province]
-        else:
-            hri = 0
+        df["house_robbery_index"] = df["province"].apply(lambda x: house_robbery_index[x] if x in house_robbery_index.keys() else 0)
         
-        return hri
+        return df[["house_robbery_index"]]
 
 # 2) family status:
 
-    def v1_family_life_quality_index(self, person:dict):
+    def v1_family_life_quality_index(self, external_df:pd.DataFrame) -> pd.Series:
+
+        
+
+        df = pd.DataFrame()
 
         
         ##### first look
-        max, first_look = self.contenter.v1_ordinal_dependents_count(person=person)
+        max, df["first_look"] = self.contenter.v1_ordinal_dependents_count(external_df)
         
+
         ##### second look
-        max, second_look = self.contenter.v1_ordinal_childrens_count(person=person)
+        max, df["second_look"] = self.contenter.v1_ordinal_childrens_count(external_df)
+
         
         ##### third look
-        third_look = self.contenter.v1_categorical_marital_status(person=person)
-        if third_look in ["Coniugato"]:
-            third_look = 1
-        else:
-            third_look = 0
+        df["third_look"] = self.contenter.v1_categorical_marital_status(external_df)
+        df["third_look"] = df["third_look"].apply(lambda x: 1 if x == "Coniugato" else 0)
+        
         
         ##### aggregate
         weights = [0.4, 0.3, 0.3]
-        values = np.array([first_look, second_look, third_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
 
 # 3) financial status:
 
-    def v1_real_asset_index(self, person:dict):
+    def v1_real_asset_index(self, external_df:pd.DataFrame) -> pd.Series:
 
-        houses = self.contenter.v1_categorical_houses_count(person=person)
+        df = pd.DataFrame()
+
+        df["houses"] = self.contenter.v1_categorical_houses_count(external_df)
 
         # considering mid-bins 
         bin_size = 3
@@ -195,193 +199,209 @@ class Observer:
             "more_houses" : bins[2]
         }
 
-        if houses in values.keys():
-            index = values[houses]
-        else:
-            index = bins[0]
+        df["index"] = df["houses"].apply(lambda x: values[x])
         
-        return index
+        return df[["index"]]
 
-    def v1_wealth_index(self, person:dict):
+    def v1_wealth_index(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+        
         ##### first look
-        max, first_look = self.contenter.v1_ordinal_out_aum(person=person)
+        max, df["first_look"] = self.contenter.v1_ordinal_out_aum(external_df)
 
 
         ##### second look
-        max, second_look = self.contenter.v1_ordinal_yearly_ctv(person=person)
+        max, df["second_look"] = self.contenter.v1_ordinal_yearly_ctv(external_df)
 
 
         ##### third look
-        max, third_look = self.contenter.v1_ordinal_yearly_income(person=person)
+        max, df["third_look"] = self.contenter.v1_ordinal_yearly_income(external_df)
         
 
         ##### fourth look
-        max, fourth_look = self.contenter.v1_ordinal_yearly_liabilities(person=person)
-        fourth_look = 1 - np.round(fourth_look/max, 2)
+        max, df["fourth_look"] = self.contenter.v1_ordinal_yearly_liabilities(external_df)
+        df["fourth_look"] = df["fourth_look"].apply(lambda x: 1 - np.round(x/max, 2))
 
 
         ##### fifth look
-        fifth_look = self.v1_real_asset_index(person=person)
+        df["fifth_look"] = self.v1_real_asset_index(external_df)
 
         ##### aggregate
         weights = [0.2, 0.1, 0.3, 0.3, 0.2]
-        values = np.array([first_look, second_look, third_look, fourth_look, fifth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look", "fifth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
     
 
 # 4) financial culture:
 
-    def v1_objective_risk_index(self, person:dict):
+    def v1_objective_risk_index(self, external_df:pd.DataFrame) -> pd.Series:
+
+        df = pd.DataFrame()
 
         ##### first look
-        max, first_look = self.contenter.v1_ordinal_age(person=person)
+        max, df["first_look"] = self.contenter.v1_ordinal_age(external_df)
 
 
         ##### second look
-        max, second_look = self.contenter.v1_ordinal_yearly_income(person=person)
+        max, df["second_look"] = self.contenter.v1_ordinal_yearly_income(external_df)
 
 
         ##### third look
-        max, third_look = self.contenter.v1_ordinal_yearly_liabilities(person=person)
+        max, df["third_look"] = self.contenter.v1_ordinal_yearly_liabilities(external_df)
         
 
         ##### fourth look
-        max, fourth_look = self.contenter.v1_ordinal_financial_experience(person=person)
+        max, df["fourth_look"] = self.contenter.v1_ordinal_financial_experience(external_df)
         
         ##### aggregate
         weights = [0.5, 0.2, 0.2, 0.1]
-        values = np.array([first_look, second_look, third_look, fourth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v1_subjective_risk_index(self, person:dict):
+    def v1_subjective_risk_index(self, external_df:pd.DataFrame) -> pd.Series:
+
+        df = pd.DataFrame()
+        
+        ##### first look
+        max, df["first_look"] = self.contenter.v1_ordinal_subjective_risk(external_df)
+
+        return df[["first_look"]]
+
+    def v1_financial_litteracy_index(self, external_df:pd.DataFrame) -> pd.Series:
+
+        df = pd.DataFrame()
 
         ##### first look
-        max, first_look = self.contenter.v1_ordinal_subjective_risk(person=person)
-
-        return first_look
-
-    def v1_financial_litteracy_index(self, person:dict):
-
-        ##### first look
-        first_look = self.contenter.v1_categorical_education(person=person)
-        if first_look in ["master di II livello e PHD"]:
-            first_look = 1
-        else:
-            first_look = 0
+        df["first_look"] = self.contenter.v1_categorical_education(external_df).apply(
+            lambda x: 1 if x=="laurea_economica" else 0
+            )
 
         ##### second look
-        max, second_look = self.contenter.v1_ordinal_financial_knowledge(person=person)
+        max, df["second_look"] = self.contenter.v1_ordinal_financial_knowledge(external_df)
+
 
         ##### third look
-        max, third_look = self.contenter.v1_ordinal_correct_financial_answers(person=person)
+        max, df["third_look"] = self.contenter.v1_ordinal_correct_financial_answers(external_df)
 
         ##### aggregate
         weights = [0.2, 0.3, 0.5]
-        values = np.array([first_look, second_look, third_look], dtype=float)
+        values = df[["first_look","second_look", "third_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
    
-    def v1_financial_experience_index(self, person:dict):
+    def v1_financial_experience_index(self, external_df:pd.DataFrame) -> pd.Series:
+
+        df = pd.DataFrame()
 
         ##### first look
-        max, first_look = self.contenter.v1_ordinal_financial_experience(person=person)
+        max, df["first_look"] = self.contenter.v1_ordinal_financial_experience(external_df)
 
 
         ##### second look
-        max, second_look = self.contenter.v1_ordinal_yearly_ctv(person=person)
+        max, df["second_look"] = self.contenter.v1_ordinal_yearly_ctv(external_df)
 
 
         ##### second look
-        max, third_look = self.contenter.v1_ordinal_yearly_trading_frequency(person=person)
+        max, df["third_look"] = self.contenter.v1_ordinal_yearly_trading_frequency(external_df)
 
         ##### aggregate
         weights = [0.4, 0.3, 0.3]
-        values = np.array([first_look, second_look, third_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v1_financial_time_horizon(self, person:dict):
+    def v1_financial_time_horizon(self, external_df:pd.DataFrame) -> pd.Series:
+
+        df = pd.DataFrame()
 
         ##### first look
-        max, first_look = self.contenter.v1_ordinal_subjective_time_horizon(person=person)
+        max, df["first_look"] = self.contenter.v1_ordinal_subjective_time_horizon(external_df)
+
 
         ##### second look
-        max, second_look = self.contenter.v1_ordinal_objective_time_horizon(person=person)
+        max, df["second_look"] = self.contenter.v1_ordinal_objective_time_horizon(external_df)
 
         ##### aggregate
         weights = [0.7, 0.3]
-        values = np.array([first_look, second_look], dtype=float)
+        values = df[["first_look", "second_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
         max = 10
         
-        return max, result
+        return max, df[["result"]]
 
-    def v2_financial_litteracy_index(self, person:dict):
+    def v2_financial_litteracy_index(self, external_df:pd.DataFrame) -> pd.Series:
+
+        df = pd.DataFrame()
 
         ##### first look
-        first_look = self.v1_financial_litteracy_index(person=person)
+        df["first_look"] = self.v1_financial_litteracy_index(external_df)
 
         
         ##### second look
-        max, second_look = self.contenter.v2_ordinal_correct_financial_answers(person=person)
+        max, df["second_look"] = self.contenter.v2_ordinal_correct_financial_answers(external_df)
         
         ##### aggregate
         weights = [0.7, 0.3]
-        values = np.array([first_look, second_look], dtype=float)
+        values = df[["first_look", "second_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df["result"]
    
 
 # 5) financial needs:
 
     # 5_1) investments:
 
-    def v1_capital_accumulation_investment_need(self, person:dict):
+    def v1_capital_accumulation_investment_need(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+        
         # 1) contenter.v1_ordinal_subjective_capital_accumulation_investment_need
         # 2) self.financial_time_horizon
         # 3) self.family_life_quality_index
         # 4) self.wealth_index	
         
         ##### first look
-        first_look = self.contenter.v1_ordinal_subjective_capital_accumulation_investment_need(person=person)[1]
+        df["first_look"] = self.contenter.v1_ordinal_subjective_capital_accumulation_investment_need(external_df)[1]
         
+
         ##### second look
-        max, second_look = self.v1_financial_time_horizon(person=person)
-        second_look = second_look / max
+        max, df["second_look"] = self.v1_financial_time_horizon(external_df)
+        df["second_look"] = df["second_look"] / max
 
 
         ##### third look
-        third_look = self.v1_family_life_quality_index(person=person)
+        df["third_look"] = self.v1_family_life_quality_index(external_df)
 
 
         ##### fourth look
-        fourth_look = self.v1_wealth_index(person=person)
+        df["fourth_look"] = self.v1_wealth_index(external_df)
 
         ##### aggregate
         weights = [0.4, 0.2, 0.2, 0.2]
-        values = np.array([first_look, second_look, third_look, fourth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
         
-    def v1_capital_protection_investment_need(self, person:dict):
+    def v1_capital_protection_investment_need(self, external_df:pd.DataFrame) -> pd.Series:
+
+        df = pd.DataFrame()
 
         # 1) self.financial_time_horizon,
         # 2) self.objective_risk_index,
@@ -391,39 +411,41 @@ class Observer:
         # 6) self.employment_uncertainty_index
 
         ##### first look
-        max, first_look = self.v1_financial_time_horizon(person=person)
-        first_look = first_look / max
+        max, df["first_look"] = self.v1_financial_time_horizon(external_df)
+        df["first_look"] = df["first_look"] / max
 
 
         ##### second look
-        second_look = self.v1_objective_risk_index(person=person)
+        df["second_look"] = self.v1_objective_risk_index(external_df)
 
 
         ##### third look
-        third_look = self.v1_subjective_risk_index(person=person)
+        df["third_look"] = self.v1_subjective_risk_index(external_df)
 
 
         ##### fourth look
-        fourth_look = self.v1_financial_litteracy_index(person=person)
+        df["fourth_look"] = self.v1_financial_litteracy_index(external_df)
 
     
         ##### fifth look
-        fifth_look = self.v1_financial_experience_index(person=person)
+        df["fifth_look"] = self.v1_financial_experience_index(external_df)
 
 
         ##### sixth look
-        sixth_look = self.v1_employment_uncertainty_index(person=person)
+        df["sixth_look"] = self.v1_employment_uncertainty_index(external_df)
 
         ##### aggregate
         weights = [0.2, 0.2, 0.2, 0.2, 0.1, 0.1]
-        values = np.array([first_look, second_look, third_look, fourth_look, fifth_look, sixth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look", "fifth_look", "sixth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v1_liquidity_investment_need(self, person:dict):
+    def v1_liquidity_investment_need(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+        
         # 1) self.family_life_quality_index
         # 2) self.wealth_index
         # 3) content.liabilities
@@ -431,34 +453,36 @@ class Observer:
         # 5) content.ordinal_subjective_liquidity_investment_need           			    
         
         ##### first look
-        first_look = self.v1_family_life_quality_index(person=person)
+        df["first_look"] = self.v1_family_life_quality_index(external_df)
 
 
         ##### second look
-        second_look = self.v1_wealth_index(person=person)
+        df["second_look"] = self.v1_wealth_index(external_df)
 
 
         ##### third look
-        max, third_look = self.contenter.v1_ordinal_yearly_liabilities(person=person)
+        max, df["third_look"] = self.contenter.v1_ordinal_yearly_liabilities(external_df)
         
 
         ##### fourth look
-        fourth_look = self.v1_employment_uncertainty_index(person=person)
+        df["fourth_look"] = self.v1_employment_uncertainty_index(external_df)
 
 
         ##### fifth look
-        max, fifth_look = self.contenter.v1_ordinal_subjective_liquidity_investment_need(person=person)
+        max, df["fifth_look"] = self.contenter.v1_ordinal_subjective_liquidity_investment_need(external_df)
 
         ##### aggregate
         weights = [0.2, 0.1, 0.2, 0.2, 0.3]
-        values = np.array([first_look, second_look, third_look, fourth_look, fifth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look", "fifth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v1_income_investment_need(self, person:dict):
+    def v1_income_investment_need(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+		
         # 1) self.financial_time_horizon
         # 2) content.ordinal_yearly_income 
         # 3) self.wealth_index
@@ -466,121 +490,131 @@ class Observer:
         # 5) contenter.v1_ordinal_subjective_income_investment_need
 
         ##### first look
-        max, first_look = self.v1_financial_time_horizon(person=person)
-        first_look = first_look / max
+        max, df["first_look"] = self.v1_financial_time_horizon(external_df)
+        df["first_look"] = df["first_look"] / max
 
 
         ##### second look
-        max, second_look = self.contenter.v1_ordinal_yearly_income(person=person)
+        max, df["second_look"] = self.contenter.v1_ordinal_yearly_income(external_df)
 
 
         ##### third look
-        third_look = self.v1_wealth_index(person=person)
+        df["third_look"] = self.v1_wealth_index(external_df)
         
     
         ##### fourth look
-        max, fourth_look = self.contenter.v1_ordinal_yearly_liabilities(person=person)
+        max, df["fourth_look"] = self.contenter.v1_ordinal_yearly_liabilities(external_df)
         
 
         ##### fifth look
-        max, fifth_look = self.contenter.v1_ordinal_subjective_income_investment_need(person=person)
+        max, df["fifth_look"] = self.contenter.v1_ordinal_subjective_income_investment_need(external_df)
 
         ##### aggregate   
         weights = [0.1, 0.3, 0.1, 0.2, 0.3]
-        values = np.array([first_look, second_look, third_look, fourth_look, fifth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look", "fifth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v1_retirement_investment_need(self, person:dict):
+    def v1_retirement_investment_need(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+        
         # 1) self.financial_time_horizon,
         # 2) self.employment_uncertainty_index
         # 3) self.wealth_index
         # 4) content.ordinal_subjective_retirement_investment_need
             	
         ##### first look
-        max, first_look = self.v1_financial_time_horizon(person=person)
-        first_look = first_look / max
+        max, df["first_look"] = self.v1_financial_time_horizon(external_df)
+        df["first_look"] = df["first_look"] / max
 
 
         ##### second look
-        second_look = self.v1_employment_uncertainty_index(person=person)
+        df["second_look"] = self.v1_employment_uncertainty_index(external_df)
 
 
         ##### third look
-        third_look = self.v1_wealth_index(person=person)
+        df["third_look"] = self.v1_wealth_index(external_df)
         
     
         ##### fourth look
-        max, fourth_look = self.contenter.v1_ordinal_subjective_retirement_investment_need(person=person)
+        max, df["fourth_look"] = self.contenter.v1_ordinal_subjective_retirement_investment_need(external_df)
 
         ##### aggregate 
         weights = [0.2, 0.2, 0.2, 0.4]
-        values = np.array([first_look, second_look, third_look, fourth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v1_heritage_investment_need(self, person:dict):
+    def v1_heritage_investment_need(self, external_df:pd.DataFrame) -> pd.Series:
 
         # 1) self.financial_time_horizon
         # 2) self.wealth_index
         # 3) content.ordinal_age
 
+        df = pd.DataFrame()
+
         ##### first look
-        max, first_look = self.v1_financial_time_horizon(person=person)
-        first_look = first_look / max
+        max, df["first_look"] = self.v1_financial_time_horizon(external_df)
+        df["first_look"] = df["first_look"] / max
+
 
         ##### second look
-        second_look = self.v1_wealth_index(person=person)
+        df["second_look"] = self.v1_wealth_index(external_df)
+
 
         ##### third look
-        max, third_look = self.contenter.v1_ordinal_age(person=person)
-        third_look = 1 - np.round(third_look/max, 2)
+        max, df["third_look"] = self.contenter.v1_ordinal_age(external_df)
+        df["third_look"] = df["third_look"].apply(lambda x: 1 - np.round(x/max, 2))
 
         ##### aggregate
         weights = [0.4, 0.3, 0.3]
-        values = np.array([first_look, second_look, third_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v2_capital_accumulation_investment_need(self, person:dict):
+    def v2_capital_accumulation_investment_need(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+        
         # 1) contenter.v2_ordinal_subjective_capital_accumulation_investment_need
         # 2) self.financial_time_horizon
         # 3) self.family_life_quality_index
         # 4) self.wealth_index	
 
         ##### first look
-        first_look = self.contenter.v2_ordinal_subjective_capital_accumulation_investment_need(person=person)[1]
+        df["first_look"] = self.contenter.v2_ordinal_subjective_capital_accumulation_investment_need(external_df)[1]
         
 
         ##### second look
-        max, second_look = self.v1_financial_time_horizon(person=person)
-        second_look = second_look / max
+        max, df["second_look"] = self.v1_financial_time_horizon(external_df)
+        df["second_look"] = df["second_look"] / max
 
 
         ##### third look
-        third_look = self.v1_family_life_quality_index(person=person)
+        df["third_look"] = self.v1_family_life_quality_index(external_df)
 
 
         ##### fourth look
-        fourth_look = self.v1_wealth_index(person=person)
+        df["fourth_look"] = self.v1_wealth_index(external_df)
 
         ##### aggregate
         weights = [0.4, 0.2, 0.2, 0.2]
-        values = np.array([first_look, second_look, third_look, fourth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
         
-    def v2_capital_protection_investment_need(self, person:dict):
+    def v2_capital_protection_investment_need(self, external_df:pd.DataFrame) -> pd.Series:
+
+        df = pd.DataFrame()
 
         # 1) self.financial_time_horizon,
         # 2) self.objective_risk_index,
@@ -591,69 +625,84 @@ class Observer:
         # 7) contenter.v2_ordinal_subjective_capital_protection_investment_need
 
         ##### first look
-        max, first_look = self.v1_financial_time_horizon(person=person)
-        first_look = first_look / max
+        max, df["first_look"] = self.v1_financial_time_horizon(external_df)
+        df["first_look"] = df["first_look"] / max
+
 
         ##### second look
-        second_look = self.v1_objective_risk_index(person=person)
+        df["second_look"] = self.v1_objective_risk_index(external_df)
+
 
         ##### third look
-        third_look = self.v1_subjective_risk_index(person=person)
+        df["third_look"] = self.v1_subjective_risk_index(external_df)
+
 
         ##### fourth look
-        fourth_look = self.v1_financial_litteracy_index(person=person)
+        df["fourth_look"] = self.v1_financial_litteracy_index(external_df)
 
+    
         ##### fifth look
-        fifth_look = self.v1_financial_experience_index(person=person)
+        df["fifth_look"] = self.v1_financial_experience_index(external_df)
+
 
         ##### sixth look
-        sixth_look = self.v1_employment_uncertainty_index(person=person)
+        df["sixth_look"] = self.v1_employment_uncertainty_index(external_df)
+
 
         ##### seventh look
-        max, seventh_look = self.contenter.v2_ordinal_subjective_capital_protection_investment_need(person=person)
-        seventh_look = np.round(seventh_look/max, 2)
+        max, df["seventh_look"] = self.contenter.v2_ordinal_subjective_capital_protection_investment_need(external_df)
+        df["seventh_look"] = df["seventh_look"].apply(lambda x: np.round(x/max, 2))
 
         ##### aggregate
         weights = [0.1, 0.1, 0.1, 0.1, 0.05, 0.05, 0.5]
-        values = np.array([first_look, second_look, third_look, fourth_look, fifth_look, sixth_look, seventh_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look", "fifth_look", "sixth_look", "seventh_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v2_liquidity_investment_need(self, person:dict):
+    def v2_liquidity_investment_need(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+        
         # 1) self.family_life_quality_index
         # 2) self.wealth_index
         # 3) content.liabilities
         # 4) self.employmet_uncertainty_index 
         # 5) contenter.v2_ordinal_subjective_liquidity_investment_need           			    
 
+
         ##### first look
-        first_look = self.v1_family_life_quality_index(person=person)
+        df["first_look"] = self.v1_family_life_quality_index(external_df)
+
 
         ##### second look
-        second_look = self.v1_wealth_index(person=person)
+        df["second_look"] = self.v1_wealth_index(external_df)
+
 
         ##### third look
-        max, third_look = self.contenter.v1_ordinal_yearly_liabilities(person=person)
+        max, df["third_look"] = self.contenter.v1_ordinal_yearly_liabilities(external_df)
+        
 
         ##### fourth look
-        fourth_look = self.v1_employment_uncertainty_index(person=person)
+        df["fourth_look"] = self.v1_employment_uncertainty_index(external_df)
+
 
         ##### fifth look
-        max, fifth_look = self.contenter.v2_ordinal_subjective_liquidity_investment_need(person=person)
+        max, df["fifth_look"] = self.contenter.v2_ordinal_subjective_liquidity_investment_need(external_df)
         
         ##### aggregate
         weights = [0.2, 0.1, 0.2, 0.2, 0.3]
-        values = np.array([first_look, second_look, third_look, fourth_look, fifth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look", "fifth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v2_income_investment_need(self, person:dict):
+    def v2_income_investment_need(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+		
         # 1) self.financial_time_horizon
         # 2) content.ordinal_yearly_income 
         # 3) self.wealth_index
@@ -662,64 +711,71 @@ class Observer:
 
 
         ##### first look
-        max, first_look = self.v1_financial_time_horizon(person=person)
-        first_look = first_look / max
+        max, df["first_look"] = self.v1_financial_time_horizon(external_df)
+        df["first_look"] = df["first_look"] / max
 
         ##### second look
-        max, second_look = self.contenter.v1_ordinal_yearly_income(person=person)
+        max, df["second_look"] = self.contenter.v1_ordinal_yearly_income(external_df)
+
 
         ##### third look
-        third_look = self.v1_wealth_index(person=person)
+        df["third_look"] = self.v1_wealth_index(external_df)
         
+    
         ##### fourth look
-        max, fourth_look = self.contenter.v1_ordinal_yearly_liabilities(person=person)
+        max, df["fourth_look"] = self.contenter.v1_ordinal_yearly_liabilities(external_df)
         
+
         ##### fifth look
-        max, fifth_look = self.contenter.v2_ordinal_subjective_income_investment_need(person=person)
+        max, df["fifth_look"] = self.contenter.v2_ordinal_subjective_income_investment_need(external_df)
     
         ##### aggregate
         weights = [0.1, 0.3, 0.1, 0.2, 0.3]
-        values = np.array([first_look, second_look, third_look, fourth_look, fifth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look", "fifth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v2_retirement_investment_need(self, person:dict):
+    def v2_retirement_investment_need(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+        
         # 1) self.financial_time_horizon,
         # 2) self.employment_uncertainty_index
         # 3) self.wealth_index
         # 4) contenter.v2_ordinal_subjective_retirement_investment_need
             	
         ##### first look
-        max, first_look = self.v1_financial_time_horizon(person=person)
-        first_look = first_look / max
+        max, df["first_look"] = self.v1_financial_time_horizon(external_df)
+        df["first_look"] = df["first_look"] / max
 
 
         ##### second look
-        second_look = self.v1_employment_uncertainty_index(person=person)
+        df["second_look"] = self.v1_employment_uncertainty_index(external_df)
 
 
         ##### third look
-        third_look = self.v1_wealth_index(person=person)
+        df["third_look"] = self.v1_wealth_index(external_df)
         
     
         ##### fourth look
-        max, fourth_look = self.contenter.v2_ordinal_subjective_retirement_investment_need(person=person)
+        max, df["fourth_look"] = self.contenter.v2_ordinal_subjective_retirement_investment_need(external_df)
         
         ##### aggregate
         weights = [0.2, 0.2, 0.2, 0.4]
-        values = np.array([first_look, second_look, third_look, fourth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
     # 5_2) insurances:
 
-    def v1_home_insurance_need(self, person:dict):
+    def v1_home_insurance_need(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+        
         # 1) self.financial_time_horizon
         # 2) self.wealth_index
         # 3) self.real_estate_index
@@ -727,155 +783,176 @@ class Observer:
         # 5) self.house_robbery_index
 
         ##### first look
-        max, first_look = self.v1_financial_time_horizon(person=person)
-        first_look = first_look / max
+        max, df["first_look"] = self.v1_financial_time_horizon(external_df)
+        df["first_look"] = df["first_look"] / max
 
 
         ##### second look
-        second_look = self.v1_wealth_index(person=person)
+        df["second_look"] = self.v1_wealth_index(external_df)
 
 
         ##### third look
-        third_look = self.v1_real_asset_index(person=person)
+        df["third_look"] = self.v1_real_asset_index(external_df)
 
 
         ##### fourth look
-        fourth_look = self.v1_family_life_quality_index(person=person)
+        df["fourth_look"] = self.v1_family_life_quality_index(external_df)
 
 
         ##### fifth look
-        fifth_look = self.v1_house_robbery_index(person=person)
+        df["fifth_look"] = self.v1_house_robbery_index(external_df)
 
         ##### aggregate
         weights = [0.2, 0.2, 0.2, 0.2, 0.2]
-        values = np.array([first_look, second_look, third_look, fourth_look, fifth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look", "fifth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v1_health_insurance_need(self, person:dict):
+    def v1_health_insurance_need(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+        
         # 1) self.financial_time_horizon
         # 2) self.family_life_quality_index
         # 3) content.ordinal_yearly_income
         # 4) self.wealth_index
 
         ##### first look
-        max, first_look = self.v1_financial_time_horizon(person=person)
-        first_look = first_look / max
+        max, df["first_look"] = self.v1_financial_time_horizon(external_df)
+        df["first_look"] = df["first_look"] / max
+
 
         ##### second look
-        second_look = self.v1_family_life_quality_index(person=person)
+        df["second_look"] = self.v1_family_life_quality_index(external_df)
+
 
         ##### fourth look
-        max, third_look = self.contenter.v1_ordinal_yearly_income(person=person)
+        max, df["third_look"] = self.contenter.v1_ordinal_yearly_income(external_df)
+        
 
         ##### fifth look
-        fourth_look = self.v1_wealth_index(person=person)
+        df["fourth_look"] = self.v1_wealth_index(external_df)
 
         ##### aggregate
         weights = [0.3, 0.2, 0.3, 0.2]
-        values = np.array([first_look, second_look, third_look, fourth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v1_longterm_care_insurance_need(self, person:dict):
+    def v1_longterm_care_insurance_need(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+        
         # 1) self.financial_time_horizon
         # 2) self.wealth_index
         
         ##### first look
-        max, first_look = self.v1_financial_time_horizon(person=person)
-        first_look = first_look / max
+        max, df["first_look"] = self.v1_financial_time_horizon(external_df)
+        df["first_look"] = df["first_look"] / max
+
 
         ##### second look
-        second_look = self.v1_wealth_index(person=person)
+        df["second_look"] = self.v1_wealth_index(external_df)
 
         ##### aggregate
         weights = [0.7, 0.3]
-        values = np.array([first_look, second_look], dtype=float)
+        values = df[["first_look", "second_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
     
     # 5_3) financing:
 
-    def v1_payment_financing_need(self, person:dict):
+    def v1_payment_financing_need(self, external_df:pd.DataFrame) -> pd.Series:
 
+        df = pd.DataFrame()
+        
         # 1) content.ordinal_yearly_income
         # 2) content.ordinal_yearly_liabilities
 
         ##### first look
-        max, first_look = self.contenter.v1_ordinal_yearly_income(person=person)
-        first_look = 1 - np.round(first_look/max, 2)
+        max, df["first_look"] = self.contenter.v1_ordinal_yearly_income(external_df)
+        df["first_look"] = df["first_look"].apply(lambda x: 1 - np.round(x/max, 2))
+
 
         ##### second look
-        max, second_look = self.contenter.v1_ordinal_yearly_liabilities(person=person)
-        second_look = 1 - np.round(second_look/max, 2)
+        max, df["second_look"] = self.contenter.v1_ordinal_yearly_liabilities(external_df)
+        df["second_look"] = df["second_look"].apply(lambda x: 1 - np.round(x/max, 2))
 
         ##### aggregate
         weights = [0.7, 0.3]
-        values = np.array([first_look, second_look], dtype=float)
+        values = df[["first_look", "second_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
         
-    def v1_loan_financing_need(self, person:dict):
+    def v1_loan_financing_need(self, external_df:pd.DataFrame) -> pd.Series:
+
+        df = pd.DataFrame()
 
         # 1) content.ordinal_yearly_income
         # 2) content.ordinal_yearly_liabilities
         # 3) self.family_life_quality_index
 
         ##### first look
-        max, first_look = self.contenter.v1_ordinal_yearly_income(person=person)
+        max, df["first_look"] = self.contenter.v1_ordinal_yearly_income(external_df)
+
 
         ##### second look
-        max, second_look = self.contenter.v1_ordinal_yearly_liabilities(person=person)
-        second_look = 1 - np.round(second_look/max, 2)
+        max, df["second_look"] = self.contenter.v1_ordinal_yearly_liabilities(external_df)
+        df["second_look"] = df["second_look"].apply(lambda x: 1 - np.round(x/max, 2))
+
 
         ##### third look
-        third_look = self.v1_family_life_quality_index(person=person)
+        df["third_look"] = self.v1_family_life_quality_index(external_df)
 
         ##### aggregate
         weights = [0.3, 0.5, 0.2]
-        values = np.array([first_look, second_look, third_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
-    def v1_mortgage_financing_need(self, person:dict):
+    def v1_mortgage_financing_need(self, external_df:pd.DataFrame) -> pd.Series:
+
+        df = pd.DataFrame()
 
         # 1) content.ordinal_yearly_income
         # 2) content.ordinal_yearly_liabilities
         # 3) self.real_asset_index
         
         ##### first look
-        max, first_look = self.contenter.v1_ordinal_yearly_income(person=person)
+        max, df["first_look"] = self.contenter.v1_ordinal_yearly_income(external_df)
+
 
         ##### second look
-        max, second_look = self.contenter.v1_ordinal_yearly_liabilities(person=person)
-        second_look = 1 - np.round(second_look/max, 2)
+        max, df["second_look"] = self.contenter.v1_ordinal_yearly_liabilities(external_df)
+        df["second_look"] = df["second_look"].apply(lambda x: 1 - np.round(x/max, 2))
+
 
         ##### third look
-        third_look = self.v1_real_asset_index(person=person)
+        df["third_look"] = self.v1_real_asset_index(external_df)
 
         ##### aggregate
         weights = [0.1, 0.4, 0.5]
-        values = np.array([first_look, second_look, third_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
 
 # 6) personal culture:
  
-    def v3_esg_propensity_index(self, person:dict):
+    def v3_esg_propensity_index(self, external_df:pd.DataFrame) -> pd.Series:
+
+        df = pd.DataFrame()
 
         # 1) contenter.v3_bool_declared_esg_propensity
         # 2) contenter.v3_nominal_declared_esg_propensity
@@ -883,25 +960,30 @@ class Observer:
         # 4) contenter.v3_bool_social_propensity_index	
         # 5) contenter.v3_bool_governance_propensity_index
 
+
         ##### first look
-        first_look = self.contenter.v3_bool_declared_esg_propensity(person=person)
+        df["first_look"] = self.contenter.v3_bool_declared_esg_propensity(external_df)[1]
+        
 
         ##### second look
-        max, second_look = self.contenter.v3_nominal_declared_esg_propensity(person=person)
+        max, df["second_look"] = self.contenter.v3_nominal_declared_esg_propensity(external_df)
+
 
         ##### third look
-        third_look = self.contenter.v3_bool_evironment_propensity_index(person=person)
+        df["third_look"] = self.contenter.v3_bool_evironment_propensity_index(external_df)
+
 
         ##### fourth look
-        fourth_look = self.contenter.v3_bool_social_propensity_index(person=person)
+        df["fourth_look"] = self.contenter.v3_bool_social_propensity_index(external_df)
+
 
         ##### fifth look
-        fifth_look = self.contenter.v3_bool_governance_propensity_index(person=person)
+        df["fifth_look"] = self.contenter.v3_bool_governance_propensity_index(external_df)
         
         ##### aggregate
         weights = [0.3, 0.4, 0.1, 0.1, 0.1]
-        values = np.array([first_look, second_look, third_look, fourth_look, fifth_look], dtype=float)
+        values = df[["first_look", "second_look", "third_look", "fourth_look", "fifth_look"]]
 
-        result = np.dot(values, weights)
+        df["result"] = np.dot(values, weights)
 
-        return result
+        return df[["result"]]
