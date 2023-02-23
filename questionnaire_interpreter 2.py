@@ -4,7 +4,6 @@ import json
 import numpy as np
 import pandas as pd
 from scipy.stats import beta
-import requests
 from questionnaire_contents import Contenter
 from questionnaire_observations import Observer
 from ingestion_utils import Type_Null_controller
@@ -402,22 +401,34 @@ class Customers:
             "age", "gender", 
             "location", "education", "profession"
         ]
-        people = []
 
-        for idx, row in temp_df:
+        # create primary key
+        temp_df = temp_df.reset_index()
+        temp_df["customer_id"] = temp_df.index + 1
 
-            person = {
-                    "id" : f'customer_{temp_df.loc[idx, "allianz_id"]}'
-                }
+        #### write the map
+        customers_list = temp_df[["customer_id", "allianz_id"]].to_dict(orient="records")
+        mappa = dict()
 
-            for column in socio_demographics:
-                
-                person[column] = temp_df.loc[idx, column]
+        # build
+        for customer in customers_list:
+            
+            key = tuple()
 
-            people.append(person)
+            for identity in customer:
+                if identity == "allianz_id":
+                    key = (*key, customer[identity])
+
+            mappa[str(key)] = customer["customer_id"]
         
-        
-        return True
+        # save
+        with open("pipelines_ingestion/maps/map_customer.json", "w") as write_file:
+            json.dump(mappa, write_file, indent=4)
+
+        # set
+        temp_df.set_index("customer_id", inplace=True)
+
+        return temp_df[socio_demographics]
 
     def sat_customer_culture(self):
         
