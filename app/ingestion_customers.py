@@ -248,8 +248,8 @@ class Customers:
                     "net_wealth_index" :  local_df.loc[idx, "net_wealth_index"]
                 },
                 "cultures" : {
-                    "objective_risk_index" : local_df.loc[idx, "objective_risk_index"],
-                    "subjective_risk_index" : local_df.loc[idx, "subjective_risk_index"],
+                    "objective_risk_propensity_index" : local_df.loc[idx, "objective_risk_index"],
+                    "subjective_risk_propensity_index" : local_df.loc[idx, "subjective_risk_index"],
                     "financial_litteracy_index" : local_df.loc[idx, "financial_litteracy_index"],
                     "financial_horizon_index" : local_df.loc[idx, "financial_horizon_index"],
                     "financial_experience_index" : local_df.loc[idx, "financial_experience_index"],
