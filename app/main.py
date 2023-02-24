@@ -21,7 +21,7 @@ def ingestion_customers():
             return jsonify("file can not be read, please send the csv file with 'customers' tag"), 422
 
         try:
-            uploaded_file = pd.read_csv("work_clienti.csv", delimiter=";", encoding="latin-1")
+            uploaded_file = pd.read_csv(uploaded_file.filename, delimiter=";", encoding="latin-1")
         except:
             return jsonify("file can not be read, please name the csv file: 'work_clienti.csv' "), 422
 
