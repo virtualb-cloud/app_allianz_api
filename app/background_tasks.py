@@ -17,6 +17,7 @@ def ingestor(df:pd.DataFrame):
         else: flag = False
 
         init = fin + 1
+        fin = init + l1
 
     ingestor = Customers(external_df=df.loc[init:, :])
     response = ingestor.run()
