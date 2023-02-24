@@ -4,9 +4,9 @@ import json
 import requests
 import numpy as np
 import pandas as pd
-from ingestion_utils import Type_Null_controller
+from app.ingestion_utils import Type_Null_controller
 
-class Promoters:
+class Advisors:
 
     def __init__(self, external_df:pd.DataFrame) -> None:
 
