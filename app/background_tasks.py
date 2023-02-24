@@ -1,6 +1,6 @@
 import pandas as pd
 from app.ingestion_customers import Customers
-
+import time
 
 def ingestor(df:pd.DataFrame):
 
@@ -18,7 +18,7 @@ def ingestor(df:pd.DataFrame):
 
         init = fin + 1
         fin = init + l1
-
+        time.sleep(10)
     ingestor = Customers(external_df=df.loc[init:, :])
     response = ingestor.run()
     if response: flag =  True
