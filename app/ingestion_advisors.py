@@ -41,7 +41,7 @@ class Advisors:
         for idx, row in df.iterrows():
 
             advisor = {
-                "id": f"advisor_{df.loc['PROMOTORE']}",
+                "id": f"advisor_{df.loc[idx, 'PROMOTORE']}",
                 "description": {
                     "classification_index": df.loc[idx, "classification_index"],
                     "qualification_index": df.loc[idx, "qualification_index"]
