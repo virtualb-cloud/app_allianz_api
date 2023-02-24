@@ -20,6 +20,10 @@ class Customers:
         # questionnaire modules initialization
         self.questionnaire_versions = ["MIFID_1_0", "MIFID_2_0", "MIFID_3_0"]
         self.version_column = "TIPO_MIFID"
+
+        if not self.version_column in self.external_df.columns:
+            self.external_df[self.version_column] = self.questionnaire_versions[0]
+            
         self.contenter = Contenter()
         self.observer = Observer()
 
