@@ -5,9 +5,9 @@ import numpy as np
 import pandas as pd
 import requests
 from scipy.stats import beta
-from questionnaire_contents import Contenter
-from questionnaire_observations import Observer
-from ingestion_utils import Type_Null_controller
+from app.questionnaire_contents import Contenter
+from app.questionnaire_observations import Observer
+from app.ingestion_utils import Type_Null_controller
 
 
 class Customers:

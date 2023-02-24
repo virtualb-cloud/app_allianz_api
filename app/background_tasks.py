@@ -1,5 +1,5 @@
 import pandas as pd
-from ingestion_customers import Customers
+from app.ingestion_customers import Customers
 
 
 def ingestor(df:pd.DataFrame):

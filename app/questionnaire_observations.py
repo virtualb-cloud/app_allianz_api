@@ -2,7 +2,7 @@
 
 import numpy as np
 import pandas as pd
-from questionnaire_contents import Contenter
+from app.questionnaire_contents import Contenter
 
 class Observer:
 
