@@ -122,7 +122,7 @@ class Contenter:
 
         replacements = {
  
-            'AO' : "aosta",
+            'AO' : "valle daosta",
 
             'TO' : "piemonte", 
             'NO' : "piemonte", 
@@ -242,14 +242,14 @@ class Contenter:
             'TP' : "sicilia", 
             'AG' : "sicilia", 
 
-            'CA' : "sardinia",
-            'SS' : "sardinia",
-            'SU' : "sardinia",
-            'OT' : "sardinia",
-            'NU' : "sardinia",
-            'OR' : "sardinia",
-            'OG' : "sardinia", 
-            'CI' : "sardinia", 
+            'CA' : "sardegna",
+            'SS' : "sardegna",
+            'SU' : "sardegna",
+            'OT' : "sardegna",
+            'NU' : "sardegna",
+            'OR' : "sardegna",
+            'OG' : "sardegna", 
+            'CI' : "sardegna", 
 
             'EE' : "lombardia", 
             'ZH' : "lombardia", 
