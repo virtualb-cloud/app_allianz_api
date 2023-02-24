@@ -23,7 +23,7 @@ class Customers:
 
         if not self.version_column in self.external_df.columns:
             self.external_df[self.version_column] = self.questionnaire_versions[0]
-            
+
         self.contenter = Contenter()
         self.observer = Observer()
 
@@ -188,7 +188,7 @@ class Customers:
 
         people = []
 
-        for idx, row in temp_df:
+        for idx, row in temp_df.iterrows():
 
             person = {
                     "id" : f'customer_{temp_df.loc[idx, "SOGGETTO"]}',
@@ -243,7 +243,7 @@ class Customers:
 
         people = []
 
-        for idx, row in temp_df:
+        for idx, row in temp_df.iterrows():
 
             person = {
                     "id" : f'customer_{temp_df.loc[idx, "SOGGETTO"]}',
@@ -299,7 +299,7 @@ class Customers:
 
         people = []
 
-        for idx, row in temp_df:
+        for idx, row in temp_df.iterrows():
 
             person = {
                     "id" : f'customer_{temp_df.loc[idx, "SOGGETTO"]}',
