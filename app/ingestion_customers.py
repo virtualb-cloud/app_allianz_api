@@ -501,7 +501,7 @@ class Customers:
                 }
 
                 response = requests.put(
-                    url="https://customers-dialogue.herokuapp.com/insert_customers",
+                    url="https://clients-dialogue.herokuapp.com/insert_customers",
                     data=body,
                     headers=headers
                     )
@@ -529,7 +529,7 @@ class Customers:
                 }
 
                 response = requests.put(
-                    url="https://customers-dialogue.herokuapp.com/insert_customers",
+                    url="https://clients-dialogue.herokuapp.com/insert_customers",
                     data=body,
                     headers=headers
                     )
@@ -558,7 +558,7 @@ class Customers:
                 }
 
                 response = requests.put(
-                    url="https://customers-dialogue.herokuapp.com/insert_customers",
+                    url="https://clients-dialogue.herokuapp.com/insert_customers",
                     data=body,
                     headers=headers
                     )
