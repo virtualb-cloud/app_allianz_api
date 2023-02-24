@@ -1,5 +1,5 @@
 import pandas as pd
-from app.ingestion_product import Products
+from ingestion_product import Products
 
 
 def ingestor(df:pd.DataFrame):

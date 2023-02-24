@@ -3,8 +3,8 @@ from flask import Flask, request, jsonify
 import os
 import pandas as pd
 from threading import Thread
-from app.ingestion_controller import Ingestion_controller
-from app.background_tasks import ingestor
+from ingestion_controller import Ingestion_controller
+from background_tasks import ingestor
 
 # Config
 app = Flask(__name__)
