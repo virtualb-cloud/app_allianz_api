@@ -84,6 +84,10 @@ class Promoters:
             
             else: self.initialized_df.loc[idx, "classification_index"] = 0
 
-        self.insert_db(self.initialized_df)
+        try:
+            response = self.insert_db(df=self.initialized_df)
+            print(response)
+            return True
+        except:
+            return False
 
-        return True

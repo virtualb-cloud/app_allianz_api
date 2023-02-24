@@ -15,15 +15,16 @@ def train():
     if request.method == "POST":
 
         try:
-            uploaded_file = request.files["products"]
-            uploaded_file.save(uploaded_file.filename)
+            uploaded_file = request.files["advisors"]
+            name = uploaded_file.filename
+            uploaded_file.save(name)
         except:
-            return jsonify("file can not be read, please send the csv file with 'products' tag"), 422
+            return jsonify("file can not be read, please send the csv file with 'advisors' tag"), 422
 
         try:
-            df = pd.read_csv("work_prodotti.csv", delimiter=";", encoding="latin-1")
+            df = pd.read_csv(name, delimiter=";", encoding="latin-1")
         except:
-            return jsonify("file can not be read, please name the csv file: 'work_prodotti.csv' "), 422
+            return jsonify("file can not be read, either encoding or delimiter has changed. "), 422
 
         controller = Ingestion_controller()
         flag, errors = controller.run(df)
@@ -34,6 +35,6 @@ def train():
         thread.start()
 
         # remove the file
-        os.remove("work_prodotti.csv")
+        os.remove(name)
         
         return jsonify("ingestor worker started succesfully and will terminate in some minutes."), 200
