@@ -84,10 +84,8 @@ class Advisors:
             
             else: self.initialized_df.loc[idx, "classification_index"] = 0
 
-        try:
-            response = self.insert_db(df=self.initialized_df)
-            print(response)
-            return True
-        except:
-            return False
+        response = self.insert_db(df=self.initialized_df)
+        print(response)
+        
+        return True
 
