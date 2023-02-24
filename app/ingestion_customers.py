@@ -3,6 +3,7 @@
 import json
 import numpy as np
 import pandas as pd
+import requests
 from scipy.stats import beta
 from app.questionnaire_contents import Contenter
 from app.questionnaire_observations import Observer
@@ -285,7 +286,6 @@ class Customers:
 
         return people
 
-
     def mifid_2022_kpi(self, version_separated_df:pd.DataFrame) -> pd.DataFrame:
 
         # copy
@@ -372,7 +372,20 @@ class Customers:
                 if response[0] == False: print(response)
                 else: self.initialized_df = response[1]
 
-                self.mifid_2018_kpi(self.initialized_df)
+                people = self.mifid_2018_kpi(self.initialized_df)
+
+                body = json.dumps(people)
+
+                headers = {
+                    "Content-Type": "application/json"
+                }
+
+                response = requests.put(
+                    url="https://customers-dialogue.herokuapp.com/insert_customers",
+                    data=body,
+                    headers=headers
+                    )
+
 
             # for version 2020
             elif version == self.questionnaire_versions[1]: 
@@ -387,7 +400,19 @@ class Customers:
                 if response[0] == False: print(response)
                 else: self.initialized_df = response[1]
 
-                self.mifid_2020_kpi(self.initialized_df)
+                people = self.mifid_2020_kpi(self.initialized_df)
+
+                body = json.dumps(people)
+
+                headers = {
+                    "Content-Type": "application/json"
+                }
+
+                response = requests.put(
+                    url="https://customers-dialogue.herokuapp.com/insert_customers",
+                    data=body,
+                    headers=headers
+                    )
 
             # for version 2022
             elif version == self.questionnaire_versions[2]: 
@@ -404,7 +429,19 @@ class Customers:
                 if response[0] == False: print(response)
                 else: self.initialized_df = response[1]
                 
-                self.mifid_2022_kpi(self.initialized_df)
+                people = self.mifid_2022_kpi(self.initialized_df)
+
+                body = json.dumps(people)
+
+                headers = {
+                    "Content-Type": "application/json"
+                }
+
+                response = requests.put(
+                    url="https://customers-dialogue.herokuapp.com/insert_customers",
+                    data=body,
+                    headers=headers
+                    )
 
         return mapped_df
 
