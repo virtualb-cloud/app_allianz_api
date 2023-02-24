@@ -16,12 +16,13 @@ def ingestion_customers():
 
         try:
             uploaded_file = request.files["customers"]
+            name = uploaded_file.filename
             uploaded_file.save(uploaded_file.filename)
         except:
             return jsonify("file can not be read, please send the csv file with 'customers' tag"), 422
 
         try:
-            uploaded_file = pd.read_csv(uploaded_file.filename, delimiter=";", encoding="latin-1")
+            uploaded_file = pd.read_csv(name, delimiter=";", encoding="latin-1")
         except:
             return jsonify("file can not be read, 'encoding' or 'delimiter' has changed. "), 422
 
@@ -34,6 +35,6 @@ def ingestion_customers():
         thread.start()
 
         # remove the file
-        os.remove(uploaded_file.filename)
+        os.remove(name)
         
         return jsonify("ingestor worker started succesfully and will terminate in some minutes."), 200
