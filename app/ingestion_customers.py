@@ -343,7 +343,7 @@ class Customers:
 
         return people
 
-    def questionnaire_handler(self) -> pd.DataFrame:
+    def run(self) -> pd.DataFrame:
 
         # copy
         temp_df = self.external_df
@@ -444,11 +444,3 @@ class Customers:
                     )
 
         return mapped_df
-
-
-
-    def run(self):
-        
-        self.questionnaire_handler()
-
-        return True
