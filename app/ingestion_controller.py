@@ -16,11 +16,12 @@ class Ingestion_controller:
             'VAL_DOMANDA_S4_14_4' : "float",
             'SESSO_B' : "string", 
             'PROV_T' : "string", 
+            'CAP_S' : "string", 
             'PROFILO_SINT_RICHIED_N' : "string", 
             'PROFESSIONE_S' : "string",
             'TAE_T' : "string", 
             'ESPERIENZA_DES' : "string",
-            'TIPO_MIFID' : "string", 
+            'TIPO_SOGG_B' : "string",
             'VAL_DOMANDA_S1_1' : "string", 
             'VAL_DOMANDA_S1_2' : "string",
             'VAL_DOMANDA_S1_3' : "string", 
@@ -65,6 +66,11 @@ class Ingestion_controller:
             'VAL_DOMANDA_S4_15' : "string", 
             "DATA_INSE_CLI" : "string", 
             "DATA_CENSIMENTO" : "string",
+            "DATA_RIFERIMENTO" : "string"
+        }
+            
+        others = {
+            'TIPO_MIFID' : "string", 
             'NASCITA_FIGLIO_1_MU20' : "integer", 
             'NASCITA_FIGLIO_2_MU20' : "integer",
             'NASCITA_FIGLIO_3_MU20' : "integer", 
