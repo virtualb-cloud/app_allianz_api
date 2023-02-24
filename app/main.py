@@ -23,7 +23,7 @@ def train():
         try:
             df = pd.read_csv("work_prodotti.csv", delimiter=";", encoding="latin-1")
         except:
-            return jsonify("file can not be read, please name the csv file: 'work_clienti.csv' "), 422
+            return jsonify("file can not be read, please name the csv file: 'work_prodotti.csv' "), 422
 
         controller = Ingestion_controller()
         flag, errors = controller.run(df)
