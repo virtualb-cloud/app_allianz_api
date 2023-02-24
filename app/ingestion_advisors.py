@@ -43,8 +43,8 @@ class Advisors:
             advisor = {
                 "id": f"advisor_{int(df.loc[idx, 'PROMOTORE'])}",
                 "description": {
-                    "classification_index": df.loc[idx, "classification_index"],
-                    "qualification_index": df.loc[idx, "qualification_index"]
+                    "classification_index": float(df.loc[idx, "classification_index"]),
+                    "qualification_index": float(df.loc[idx, "qualification_index"])
                 }
             }
             advisors.append(advisor)
