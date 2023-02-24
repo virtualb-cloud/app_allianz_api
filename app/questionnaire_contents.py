@@ -77,7 +77,7 @@ class Contenter:
             'FEMMINILE': "f",
             'MASCHILE': "m"
         }
-        array = external_df[column].map(gender_map)
+        array = external_df[column].map(gender_map).fillna("m")
 
         return array
 
@@ -109,7 +109,7 @@ class Contenter:
             'NON_OCCUPATO' : "non occupato"
         }
         
-        array = array.map(replacements).map(profession_map)
+        array = array.map(replacements).map(profession_map).fillna("non occupato")
 
         return array
     
@@ -288,7 +288,7 @@ class Contenter:
             'elementari': "scuola primaria"
         }
 
-        array = array.map(replacements).map(education_map)
+        array = array.map(replacements).map(education_map).fillna("scuola primaria")
 
         return array
 
@@ -319,7 +319,7 @@ class Contenter:
             '3.11.13': "more_houses",
         }
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna("zero_houses")
 
         return array
     
@@ -344,7 +344,7 @@ class Contenter:
             '1.1.4': "Vedovo"
         }   
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna("Nubile")
         
         return array
 
@@ -371,7 +371,7 @@ class Contenter:
 
         max = 4
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
 
         array = array / max
 
@@ -400,7 +400,7 @@ class Contenter:
         
         max = 3
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
 
         array = array / max
         
@@ -446,7 +446,7 @@ class Contenter:
             '2.7.4': 0
         }  
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
         
         array = array / max
         
@@ -490,7 +490,7 @@ class Contenter:
             '3.9.14': bins_2[3],
         }
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
         
         array = array / max_2
 
@@ -536,7 +536,7 @@ class Contenter:
             '3.10.15': bins[4],
         }
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
         
         array = array / max
 
@@ -568,7 +568,7 @@ class Contenter:
             "3.12.4": bins[2]
         }  
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
 
         max_income, array2 = self.v1_ordinal_yearly_income(external_df)
 
@@ -612,7 +612,7 @@ class Contenter:
         }
 
         for column in columns:
-            df[column] = df[column].map(replacements)
+            df[column] = df[column].map(replacements).fillna(0)
         
         max = len(columns)
 
@@ -652,7 +652,7 @@ class Contenter:
         }
 
         for column in columns:
-            df[column] = df[column].map(replacements)
+            df[column] = df[column].map(replacements).fillna(0)
 
         max = len(columns)
 
@@ -694,7 +694,7 @@ class Contenter:
         }
 
         for column in columns:
-            df[column] = df[column].map(replacements)
+            df[column] = df[column].map(replacements).fillna(0)
 
         ##### check
         df = df.assign(rating=0)
@@ -749,7 +749,7 @@ class Contenter:
         }
 
         max = max / years
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
         array = array / max
 
         return max, array
@@ -788,7 +788,7 @@ class Contenter:
 
             df.loc[idx, "result"] = np.dot(weights, values)
 
-        array = df["result"] / max_horizon
+        array = df["result"].fillna(0) / max_horizon
 
         return max_horizon, array
 
@@ -817,7 +817,7 @@ class Contenter:
             "4.15.4": bins[3]
         }  
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
 
         return max, array
 
@@ -848,7 +848,7 @@ class Contenter:
         }
 
         for column in columns:
-            df[column] = df[column].map(replacements)
+            df[column] = df[column].map(replacements).fillna(0)
 
         ##### check
         df = df.assign(result=0)
@@ -898,7 +898,7 @@ class Contenter:
 
             df.loc[idx, "result"] = horizon
 
-        array = df["result"] / max_time
+        array = df["result"].fillna(0) / max_time
 
         return max_time, array
 
@@ -940,7 +940,7 @@ class Contenter:
         ##### map
 
         for column in columns:
-            df[column] = df[column].map(replacements)
+            df[column] = df[column].map(replacements).fillna(0)
 
         ##### check
         df = df.assign(rating=0)
@@ -997,7 +997,7 @@ class Contenter:
             'N': 0,
         }
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
 
         return max, array
 
@@ -1026,7 +1026,7 @@ class Contenter:
             'N': 0,
         }
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
         
         return max, array
 
@@ -1055,7 +1055,7 @@ class Contenter:
             'N': 0,
         }
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
         
         return max, array
 
@@ -1084,7 +1084,7 @@ class Contenter:
             'N': 0,
         }
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
         
         return max, array
 
@@ -1113,7 +1113,7 @@ class Contenter:
             'N': 0,
         }
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
 
         array = array / max
         
@@ -1145,7 +1145,7 @@ class Contenter:
         }
 
         for column in columns:
-            df[column].map(replacements)
+            df[column].map(replacements).fillna(0)
         
 
         array = df[columns].sum(numeric_only=True, axis=1)
@@ -1179,7 +1179,7 @@ class Contenter:
             'N': 0,
         }
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
 
         array = array / max
         
@@ -1210,7 +1210,7 @@ class Contenter:
             'N': 0,
         }
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
 
         array = array / max
         
@@ -1241,7 +1241,7 @@ class Contenter:
             'N': 0,
         }
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
 
         array = array / max
         
@@ -1269,7 +1269,7 @@ class Contenter:
             "B" : 0
         }
 
-        array = array.map(mappa)
+        array = array.map(mappa).fillna(0)
         
         return array
 
@@ -1300,7 +1300,7 @@ class Contenter:
 
         max = 1
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
         
         return max, array
 
@@ -1325,7 +1325,7 @@ class Contenter:
             "C" : "C"
         }
 
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
 
         # check
 
@@ -1359,7 +1359,7 @@ class Contenter:
             "B" : "B",
             "C" : "C"
         }
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
 
         # check
 
@@ -1393,7 +1393,7 @@ class Contenter:
             "B" : "B",
             "C" : "C"
         }
-        array = array.map(replacements)
+        array = array.map(replacements).fillna(0)
 
         # check
 
