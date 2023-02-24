@@ -184,51 +184,50 @@ class Customers:
     def mifid_2018_kpi(self, version_separated_df:pd.DataFrame) -> pd.DataFrame:
 
         # copy
-        temp_df = version_separated_df
         local_df = pd.DataFrame()
 
         # 1) SD:
-        local_df["id"] = temp_df["SOGGETTO"]
-        max, local_df["age"] = self.contenter.v1_ordinal_age(temp_df)
+        local_df["id"] = version_separated_df["SOGGETTO"]
+        max, local_df["age"] = self.contenter.v1_ordinal_age(version_separated_df)
         local_df["age"] = local_df["age"] * max
-        local_df["gender"] = self.contenter.v1_categorical_gender(temp_df)
-        local_df["location"] = self.contenter.v1_categorical_location_region(temp_df)
-        local_df["education"] = self.contenter.v1_categorical_education(temp_df)
-        local_df["profession"] = self.contenter.v1_categorical_profession(temp_df)
+        local_df["gender"] = self.contenter.v1_categorical_gender(version_separated_df)
+        local_df["location"] = self.contenter.v1_categorical_location_region(version_separated_df)
+        local_df["education"] = self.contenter.v1_categorical_education(version_separated_df)
+        local_df["profession"] = self.contenter.v1_categorical_profession(version_separated_df)
         
         # 2) status:
-        max, local_df["net_income_index"] = self.contenter.v1_ordinal_yearly_income(temp_df)
-        max, local_df["financial_assets_index"] = self.contenter.v1_ordinal_out_aum(temp_df)
-        max, local_df["net_liabilities_index"] = self.contenter.v1_ordinal_yearly_liabilities(temp_df)
-        local_df["real_assets_index"] = self.observer.v1_real_asset_index(temp_df)
-        local_df["net_wealth_index"] = self.observer.v1_wealth_index(temp_df)
+        max, local_df["net_income_index"] = self.contenter.v1_ordinal_yearly_income(version_separated_df)
+        max, local_df["financial_assets_index"] = self.contenter.v1_ordinal_out_aum(version_separated_df)
+        max, local_df["net_liabilities_index"] = self.contenter.v1_ordinal_yearly_liabilities(version_separated_df)
+        local_df["real_assets_index"] = self.observer.v1_real_asset_index(version_separated_df)
+        local_df["net_wealth_index"] = self.observer.v1_wealth_index(version_separated_df)
 
         # 3) cultures:
-        local_df["objective_risk_index"] = self.observer.v1_objective_risk_index(temp_df)
-        local_df["subjective_risk_index"] = self.observer.v1_subjective_risk_index(temp_df)
-        local_df["financial_litteracy_index"] = self.observer.v1_financial_litteracy_index(temp_df)
-        max, local_df["financial_horizon_index"] = self.observer.v1_financial_time_horizon(temp_df)
-        local_df["financial_experience_index"] = self.observer.v1_financial_experience_index(temp_df)
-        local_df["life_quality_index"] = self.observer.v1_family_life_quality_index(temp_df)
-        local_df["sophisticated_instrument"] = self.contenter.v1_bool_sophisticated_instrument_presence(temp_df)
+        local_df["objective_risk_index"] = self.observer.v1_objective_risk_index(version_separated_df)
+        local_df["subjective_risk_index"] = self.observer.v1_subjective_risk_index(version_separated_df)
+        local_df["financial_litteracy_index"] = self.observer.v1_financial_litteracy_index(version_separated_df)
+        max, local_df["financial_horizon_index"] = self.observer.v1_financial_time_horizon(version_separated_df)
+        local_df["financial_experience_index"] = self.observer.v1_financial_experience_index(version_separated_df)
+        local_df["life_quality_index"] = self.observer.v1_family_life_quality_index(version_separated_df)
+        local_df["sophisticated_instrument"] = self.contenter.v1_bool_sophisticated_instrument_presence(version_separated_df)
 
         # 4) needs:
-        local_df["capital_accumulation_investment_need"] = self.observer.v1_capital_accumulation_investment_need(temp_df)
-        local_df["capital_protection_investment_need"] = self.observer.v1_capital_protection_investment_need(temp_df)
-        local_df["liquidity_investment_need"] = self.observer.v1_liquidity_investment_need(temp_df)
-        local_df["income_investment_need"] = self.observer.v1_income_investment_need(temp_df)
-        local_df["retirement_investment_need"] = self.observer.v1_retirement_investment_need(temp_df)
-        local_df["heritage_investment_need"] = self.observer.v1_heritage_investment_need(temp_df)
-        local_df["home_insurance_need"] = self.observer.v1_home_insurance_need(temp_df)
-        local_df["health_insurance_need"] = self.observer.v1_health_insurance_need(temp_df)
-        local_df["longterm_care_insurance_need"] = self.observer.v1_longterm_care_insurance_need(temp_df)
-        local_df["payment_financing_need"] = self.observer.v1_payment_financing_need(temp_df)
-        local_df["loan_financing_need"] = self.observer.v1_loan_financing_need(temp_df)
-        local_df["mortgage_financing_need"] = self.observer.v1_mortgage_financing_need(temp_df)
+        local_df["capital_accumulation_investment_need"] = self.observer.v1_capital_accumulation_investment_need(version_separated_df)
+        local_df["capital_protection_investment_need"] = self.observer.v1_capital_protection_investment_need(version_separated_df)
+        local_df["liquidity_investment_need"] = self.observer.v1_liquidity_investment_need(version_separated_df)
+        local_df["income_investment_need"] = self.observer.v1_income_investment_need(version_separated_df)
+        local_df["retirement_investment_need"] = self.observer.v1_retirement_investment_need(version_separated_df)
+        local_df["heritage_investment_need"] = self.observer.v1_heritage_investment_need(version_separated_df)
+        local_df["home_insurance_need"] = self.observer.v1_home_insurance_need(version_separated_df)
+        local_df["health_insurance_need"] = self.observer.v1_health_insurance_need(version_separated_df)
+        local_df["longterm_care_insurance_need"] = self.observer.v1_longterm_care_insurance_need(version_separated_df)
+        local_df["payment_financing_need"] = self.observer.v1_payment_financing_need(version_separated_df)
+        local_df["loan_financing_need"] = self.observer.v1_loan_financing_need(version_separated_df)
+        local_df["mortgage_financing_need"] = self.observer.v1_mortgage_financing_need(version_separated_df)
 
         people = []
 
-        for idx, row in temp_df.iterrows():
+        for idx, row in local_df.iterrows():
 
             person = {
                     "id" : local_df.loc[idx, "id"],
@@ -278,51 +277,50 @@ class Customers:
     def mifid_2020_kpi(self, version_separated_df:pd.DataFrame) -> pd.DataFrame:
         
         # copy
-        temp_df = version_separated_df
         local_df = pd.DataFrame()
 
         # 1) SD:
-        local_df["id"] = temp_df["SOGGETTO"]
-        max, local_df["age"] = self.contenter.v1_ordinal_age(temp_df)
+        local_df["id"] = version_separated_df["SOGGETTO"]
+        max, local_df["age"] = self.contenter.v1_ordinal_age(version_separated_df)
         local_df["age"] = local_df["age"] * max
-        local_df["gender"] = self.contenter.v1_categorical_gender(temp_df)
-        local_df["location"] = self.contenter.v1_categorical_location_region(temp_df)
-        local_df["education"] = self.contenter.v1_categorical_education(temp_df)
-        local_df["profession"] = self.contenter.v1_categorical_profession(temp_df)
+        local_df["gender"] = self.contenter.v1_categorical_gender(version_separated_df)
+        local_df["location"] = self.contenter.v1_categorical_location_region(version_separated_df)
+        local_df["education"] = self.contenter.v1_categorical_education(version_separated_df)
+        local_df["profession"] = self.contenter.v1_categorical_profession(version_separated_df)
 
         # 2) status:
-        max, local_df["net_income_index"] = self.contenter.v1_ordinal_yearly_income(temp_df)
-        max, local_df["financial_assets_index"] = self.contenter.v1_ordinal_out_aum(temp_df)
-        max, local_df["net_liabilities_index"] = self.contenter.v1_ordinal_yearly_liabilities(temp_df)
-        local_df["net_wealth_index"] = self.observer.v1_wealth_index(temp_df)
-        local_df["real_assets_index"] = self.observer.v1_real_asset_index(temp_df)
+        max, local_df["net_income_index"] = self.contenter.v1_ordinal_yearly_income(version_separated_df)
+        max, local_df["financial_assets_index"] = self.contenter.v1_ordinal_out_aum(version_separated_df)
+        max, local_df["net_liabilities_index"] = self.contenter.v1_ordinal_yearly_liabilities(version_separated_df)
+        local_df["net_wealth_index"] = self.observer.v1_wealth_index(version_separated_df)
+        local_df["real_assets_index"] = self.observer.v1_real_asset_index(version_separated_df)
 
         # 3) cultures:
-        local_df["objective_risk_index"] = self.observer.v1_objective_risk_index(temp_df)
-        local_df["subjective_risk_index"] = self.observer.v1_subjective_risk_index(temp_df)
-        local_df["financial_litteracy_index"] = self.observer.v2_financial_litteracy_index(temp_df)
-        max, local_df["financial_time_horizon"] = self.observer.v1_financial_time_horizon(temp_df)
-        local_df["financial_experience_index"] = self.observer.v1_financial_experience_index(temp_df)
-        local_df["life_quality_index"] = self.observer.v1_family_life_quality_index(temp_df)
-        local_df["sophisticated_instrument"] = self.contenter.v1_bool_sophisticated_instrument_presence(temp_df)
+        local_df["objective_risk_index"] = self.observer.v1_objective_risk_index(version_separated_df)
+        local_df["subjective_risk_index"] = self.observer.v1_subjective_risk_index(version_separated_df)
+        local_df["financial_litteracy_index"] = self.observer.v2_financial_litteracy_index(version_separated_df)
+        max, local_df["financial_time_horizon"] = self.observer.v1_financial_time_horizon(version_separated_df)
+        local_df["financial_experience_index"] = self.observer.v1_financial_experience_index(version_separated_df)
+        local_df["life_quality_index"] = self.observer.v1_family_life_quality_index(version_separated_df)
+        local_df["sophisticated_instrument"] = self.contenter.v1_bool_sophisticated_instrument_presence(version_separated_df)
 
         # 4) needs:
-        local_df["capital_accumulation_investment_need"] = self.observer.v2_capital_accumulation_investment_need(temp_df)
-        local_df["capital_protection_investment_need"] = self.observer.v2_capital_protection_investment_need(temp_df)
-        local_df["liquidity_investment_need"] = self.observer.v2_liquidity_investment_need(temp_df)
-        local_df["income_investment_need"] = self.observer.v2_income_investment_need(temp_df)
-        local_df["retirement_investment_need"] = self.observer.v2_retirement_investment_need(temp_df)
-        local_df["heritage_investment_need"] = self.observer.v1_heritage_investment_need(temp_df)
-        local_df["home_insurance_need"] = self.observer.v1_home_insurance_need(temp_df)
-        local_df["health_insurance_need"] = self.observer.v1_health_insurance_need(temp_df)
-        local_df["longterm_care_insurance_need"] = self.observer.v1_longterm_care_insurance_need(temp_df)
-        local_df["payment_financing_need"] = self.observer.v1_payment_financing_need(temp_df)
-        local_df["loan_financing_need"] = self.observer.v1_loan_financing_need(temp_df)
-        local_df["mortgage_financing_need"] = self.observer.v1_mortgage_financing_need(temp_df)
+        local_df["capital_accumulation_investment_need"] = self.observer.v2_capital_accumulation_investment_need(version_separated_df)
+        local_df["capital_protection_investment_need"] = self.observer.v2_capital_protection_investment_need(version_separated_df)
+        local_df["liquidity_investment_need"] = self.observer.v2_liquidity_investment_need(version_separated_df)
+        local_df["income_investment_need"] = self.observer.v2_income_investment_need(version_separated_df)
+        local_df["retirement_investment_need"] = self.observer.v2_retirement_investment_need(version_separated_df)
+        local_df["heritage_investment_need"] = self.observer.v1_heritage_investment_need(version_separated_df)
+        local_df["home_insurance_need"] = self.observer.v1_home_insurance_need(version_separated_df)
+        local_df["health_insurance_need"] = self.observer.v1_health_insurance_need(version_separated_df)
+        local_df["longterm_care_insurance_need"] = self.observer.v1_longterm_care_insurance_need(version_separated_df)
+        local_df["payment_financing_need"] = self.observer.v1_payment_financing_need(version_separated_df)
+        local_df["loan_financing_need"] = self.observer.v1_loan_financing_need(version_separated_df)
+        local_df["mortgage_financing_need"] = self.observer.v1_mortgage_financing_need(version_separated_df)
 
         people = []
 
-        for idx, row in temp_df.iterrows():
+        for idx, row in local_df.iterrows():
 
             person = {
                     "id" : local_df.loc[idx, "id"],
@@ -372,53 +370,52 @@ class Customers:
     def mifid_2022_kpi(self, version_separated_df:pd.DataFrame) -> pd.DataFrame:
 
         # copy
-        temp_df = version_separated_df
         local_df = pd.DataFrame()
 
         # 1) SD:
-        local_df["id"] = temp_df["SOGGETTO"]
-        max, local_df["age"] = self.contenter.v1_ordinal_age(temp_df)
+        local_df["id"] = version_separated_df["SOGGETTO"]
+        max, local_df["age"] = self.contenter.v1_ordinal_age(version_separated_df)
         local_df["age"] = local_df["age"] * max
-        local_df["gender"] = self.contenter.v1_categorical_gender(temp_df)
-        local_df["location"] = self.contenter.v1_categorical_location_region(temp_df)
-        local_df["education"] = self.contenter.v1_categorical_education(temp_df)
-        local_df["profession"] = self.contenter.v1_categorical_profession(temp_df)
+        local_df["gender"] = self.contenter.v1_categorical_gender(version_separated_df)
+        local_df["location"] = self.contenter.v1_categorical_location_region(version_separated_df)
+        local_df["education"] = self.contenter.v1_categorical_education(version_separated_df)
+        local_df["profession"] = self.contenter.v1_categorical_profession(version_separated_df)
 
         # 2) status:
-        max, local_df["net_income_index"] = self.contenter.v1_ordinal_yearly_income(temp_df)
-        max, local_df["financial_assets_index"] = self.contenter.v1_ordinal_out_aum(temp_df)
-        max, local_df["net_liabilities_index"] = self.contenter.v1_ordinal_yearly_liabilities(temp_df)
-        local_df["net_wealth_index"] = self.observer.v1_wealth_index(temp_df)
-        local_df["real_assets_index"] = self.observer.v1_real_asset_index(temp_df)
+        max, local_df["net_income_index"] = self.contenter.v1_ordinal_yearly_income(version_separated_df)
+        max, local_df["financial_assets_index"] = self.contenter.v1_ordinal_out_aum(version_separated_df)
+        max, local_df["net_liabilities_index"] = self.contenter.v1_ordinal_yearly_liabilities(version_separated_df)
+        local_df["net_wealth_index"] = self.observer.v1_wealth_index(version_separated_df)
+        local_df["real_assets_index"] = self.observer.v1_real_asset_index(version_separated_df)
         
         # 3) cultures:
-        local_df["objective_risk_index"] = self.observer.v1_objective_risk_index(temp_df)
-        local_df["subjective_risk_index"] = self.observer.v1_subjective_risk_index(temp_df)
-        local_df["financial_litteracy_index"] = self.observer.v2_financial_litteracy_index(temp_df)
-        max, local_df["financial_time_horizon"] = self.observer.v1_financial_time_horizon(temp_df)
-        local_df["financial_experience_index"] = self.observer.v1_financial_experience_index(temp_df)
-        local_df["esg_propensity_index"] = self.observer.v3_esg_propensity_index(temp_df)
-        local_df["life_quality_index"] = self.observer.v1_family_life_quality_index(temp_df)
-        local_df["sophisticated_instrument"] = self.contenter.v1_bool_sophisticated_instrument_presence(temp_df)
+        local_df["objective_risk_index"] = self.observer.v1_objective_risk_index(version_separated_df)
+        local_df["subjective_risk_index"] = self.observer.v1_subjective_risk_index(version_separated_df)
+        local_df["financial_litteracy_index"] = self.observer.v2_financial_litteracy_index(version_separated_df)
+        max, local_df["financial_time_horizon"] = self.observer.v1_financial_time_horizon(version_separated_df)
+        local_df["financial_experience_index"] = self.observer.v1_financial_experience_index(version_separated_df)
+        local_df["esg_propensity_index"] = self.observer.v3_esg_propensity_index(version_separated_df)
+        local_df["life_quality_index"] = self.observer.v1_family_life_quality_index(version_separated_df)
+        local_df["sophisticated_instrument"] = self.contenter.v1_bool_sophisticated_instrument_presence(version_separated_df)
 
         # 4) needs:
-        local_df["capital_accumulation_investment_need"] = self.observer.v2_capital_accumulation_investment_need(temp_df)
-        local_df["capital_protection_investment_need"] = self.observer.v2_capital_protection_investment_need(temp_df)
-        local_df["liquidity_investment_need"] = self.observer.v2_liquidity_investment_need(temp_df)
-        local_df["income_investment_need"] = self.observer.v2_income_investment_need(temp_df)
-        local_df["retirement_investment_need"] = self.observer.v2_retirement_investment_need(temp_df)
-        local_df["heritage_investment_need"] = self.observer.v1_heritage_investment_need(temp_df)
-        local_df["home_insurance_need"] = self.observer.v1_home_insurance_need(temp_df)
-        local_df["health_insurance_need"] = self.observer.v1_health_insurance_need(temp_df)
-        local_df["longterm_care_insurance_need"] = self.observer.v1_longterm_care_insurance_need(temp_df)
-        local_df["payment_financing_need"] = self.observer.v1_payment_financing_need(temp_df)
-        local_df["loan_financing_need"] = self.observer.v1_loan_financing_need(temp_df)
-        local_df["mortgage_financing_need"] = self.observer.v1_mortgage_financing_need(temp_df)
+        local_df["capital_accumulation_investment_need"] = self.observer.v2_capital_accumulation_investment_need(version_separated_df)
+        local_df["capital_protection_investment_need"] = self.observer.v2_capital_protection_investment_need(version_separated_df)
+        local_df["liquidity_investment_need"] = self.observer.v2_liquidity_investment_need(version_separated_df)
+        local_df["income_investment_need"] = self.observer.v2_income_investment_need(version_separated_df)
+        local_df["retirement_investment_need"] = self.observer.v2_retirement_investment_need(version_separated_df)
+        local_df["heritage_investment_need"] = self.observer.v1_heritage_investment_need(version_separated_df)
+        local_df["home_insurance_need"] = self.observer.v1_home_insurance_need(version_separated_df)
+        local_df["health_insurance_need"] = self.observer.v1_health_insurance_need(version_separated_df)
+        local_df["longterm_care_insurance_need"] = self.observer.v1_longterm_care_insurance_need(version_separated_df)
+        local_df["payment_financing_need"] = self.observer.v1_payment_financing_need(version_separated_df)
+        local_df["loan_financing_need"] = self.observer.v1_loan_financing_need(version_separated_df)
+        local_df["mortgage_financing_need"] = self.observer.v1_mortgage_financing_need(version_separated_df)
 
 
         people = []
 
-        for idx, row in temp_df.iterrows():
+        for idx, row in local_df.iterrows():
 
             person = {
                 "id" : local_df.loc[idx, "id"],
@@ -474,8 +471,6 @@ class Customers:
         
         # initiation
         version_separated_df = pd.DataFrame()
-        mapped_df = pd.DataFrame()
-
         
         for version in self.questionnaire_versions:
 
@@ -566,4 +561,4 @@ class Customers:
                     headers=headers
                     )
 
-        return mapped_df
+        return True
