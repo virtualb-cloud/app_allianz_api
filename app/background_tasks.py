@@ -18,8 +18,8 @@ def ingestor(df:pd.DataFrame):
 
         init = fin + 1
         fin = init + l1
-        time.sleep(10)
-        
+        time.sleep(5)
+
     ingestor = Customers(external_df=df.loc[init:, :])
     response = ingestor.run()
     if response: flag =  True
