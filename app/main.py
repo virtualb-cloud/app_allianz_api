@@ -21,15 +21,15 @@ def ingestion_customers():
             return jsonify("file can not be read, please send the csv file with 'customers' tag"), 422
 
         try:
-            df = pd.read_csv("work_clienti.csv", delimiter=";", encoding="latin-1")
+            uploaded_file = pd.read_csv("work_clienti.csv", delimiter=";", encoding="latin-1")
         except:
             return jsonify("file can not be read, please name the csv file: 'work_clienti.csv' "), 422
 
         controller = Ingestion_controller()
-        flag, errors = controller.run(df)
+        flag, errors = controller.run(uploaded_file)
         if not flag: return errors, 422
 
-        thread = Thread(target=ingestor, args=(df,))
+        thread = Thread(target=ingestor, args=(uploaded_file,))
         thread.daemon = True
         thread.start()
 

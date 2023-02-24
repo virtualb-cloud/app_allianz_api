@@ -14,6 +14,8 @@ class Customers:
 
     def __init__(self, external_df:pd.DataFrame) -> None:
 
+        pd.options.mode.chained_assignment = None 
+
         # copy
         self.external_df = external_df
 
