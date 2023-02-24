@@ -4,7 +4,7 @@ import time
 
 def ingestor(df:pd.DataFrame):
 
-    l1 = round(len(df)/100)
+    l1 = round(len(df)/20)
 
     init = 0
     fin = init + l1
