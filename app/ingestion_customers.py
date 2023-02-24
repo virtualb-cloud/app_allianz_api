@@ -505,6 +505,7 @@ class Customers:
                     data=body,
                     headers=headers
                     )
+                print(response.text)
 
 
             # for version 2020
@@ -533,6 +534,7 @@ class Customers:
                     data=body,
                     headers=headers
                     )
+                print(response.text)
 
             # for version 2022
             elif version == self.questionnaire_versions[2]: 
@@ -562,5 +564,6 @@ class Customers:
                     data=body,
                     headers=headers
                     )
+                print(response.text)
 
         return True
