@@ -232,9 +232,9 @@ class Customers:
         for idx, row in local_df.iterrows():
 
             person = {
-                    "id" : local_df.loc[idx, "id"],
+                    "id" : f'customer_{local_df.loc[idx, "id"]}',
                     "sociodemographics" : {
-                        "age" : local_df.loc[idx, "age"],
+                        "age" : round(local_df.loc[idx, "age"]),
                         "gender" : local_df.loc[idx, "gender"],
                         "location" : local_df.loc[idx, "location"],
                         "education" : local_df.loc[idx, "education"],
