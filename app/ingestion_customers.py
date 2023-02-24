@@ -232,45 +232,45 @@ class Customers:
         for idx, row in local_df.iterrows():
 
             person = {
-                    "id" : f'customer_{local_df.loc[idx, "id"]}',
-                    "sociodemographics" : {
-                        "age" : int(local_df.loc[idx, "age"]),
-                        "gender" : local_df.loc[idx, "gender"],
-                        "location" : local_df.loc[idx, "location"],
-                        "education" : local_df.loc[idx, "education"],
-                        "profession" : local_df.loc[idx, "profession"]
-                    },
-                    "status" : {
-                        "net_income_index" : local_df.loc[idx, "net_income_index"],
-                        "financial_assets_index" : local_df.loc[idx, "financial_assets_index"],
-                        "real_assets_index" : local_df.loc[idx, "real_assets_index"],
-                        "net_liabilities_index" : local_df.loc[idx, "net_liabilities_index"],
-                        "net_wealth_index" :  local_df.loc[idx, "net_wealth_index"]
-                    },
-                    "cultures" : {
-                        "objective_risk_index" : local_df.loc[idx, "objective_risk_index"],
-                        "subjective_risk_index" : local_df.loc[idx, "subjective_risk_index"],
-                        "financial_litteracy_index" : local_df.loc[idx, "financial_litteracy_index"],
-                        "financial_horizon_index" : local_df.loc[idx, "financial_horizon_index"],
-                        "financial_experience_index" : local_df.loc[idx, "financial_experience_index"],
-                        "life_quality_index" : local_df.loc[idx, "life_quality_index"],
-                        "sophisticated_instrument" : local_df.loc[idx, "sophisticated_instrument"]
-                    },
-                    "needs" : {
-                        "capital_accumulation_investment_need" : local_df.loc[idx, "capital_accumulation_investment_need"],
-                        "capital_protection_investment_need" : local_df.loc[idx, "capital_protection_investment_need"],
-                        "liquidity_investment_need" : local_df.loc[idx, "liquidity_investment_need"],
-                        "income_investment_need" : local_df.loc[idx, "income_investment_need"],
-                        "retirement_investment_need" : local_df.loc[idx, "retirement_investment_need"],
-                        "heritage_investment_need" : local_df.loc[idx, "heritage_investment_need"],
-                        "home_insurance_need" : local_df.loc[idx, "home_insurance_need"],
-                        "health_insurance_need" : local_df.loc[idx, "health_insurance_need"],
-                        "longterm_care_insurance_need" : local_df.loc[idx, "longterm_care_insurance_need"],
-                        "payment_financing_need" : local_df.loc[idx, "payment_financing_need"],
-                        "loan_financing_need" : local_df.loc[idx, "loan_financing_need"],
-                        "mortgage_financing_need" : local_df.loc[idx, "mortgage_financing_need"]
-                    }
+                "id" : f'customer_{int(local_df.loc[idx, "id"])}',
+                "sociodemographics" : {
+                    "age" : int(local_df.loc[idx, "age"]),
+                    "gender" : local_df.loc[idx, "gender"],
+                    "location" : local_df.loc[idx, "location"],
+                    "education" : local_df.loc[idx, "education"],
+                    "profession" : local_df.loc[idx, "profession"]
+                },
+                "status" : {
+                    "net_income_index" : local_df.loc[idx, "net_income_index"],
+                    "financial_assets_index" : local_df.loc[idx, "financial_assets_index"],
+                    "real_assets_index" : local_df.loc[idx, "real_assets_index"],
+                    "net_liabilities_index" : local_df.loc[idx, "net_liabilities_index"],
+                    "net_wealth_index" :  local_df.loc[idx, "net_wealth_index"]
+                },
+                "cultures" : {
+                    "objective_risk_index" : local_df.loc[idx, "objective_risk_index"],
+                    "subjective_risk_index" : local_df.loc[idx, "subjective_risk_index"],
+                    "financial_litteracy_index" : local_df.loc[idx, "financial_litteracy_index"],
+                    "financial_horizon_index" : local_df.loc[idx, "financial_horizon_index"],
+                    "financial_experience_index" : local_df.loc[idx, "financial_experience_index"],
+                    "life_quality_index" : local_df.loc[idx, "life_quality_index"],
+                    "sophisticated_instrument" : int(local_df.loc[idx, "sophisticated_instrument"])
+                },
+                "needs" : {
+                    "capital_accumulation_investment_need" : local_df.loc[idx, "capital_accumulation_investment_need"],
+                    "capital_protection_investment_need" : local_df.loc[idx, "capital_protection_investment_need"],
+                    "liquidity_investment_need" : local_df.loc[idx, "liquidity_investment_need"],
+                    "income_investment_need" : local_df.loc[idx, "income_investment_need"],
+                    "retirement_investment_need" : local_df.loc[idx, "retirement_investment_need"],
+                    "heritage_investment_need" : local_df.loc[idx, "heritage_investment_need"],
+                    "home_insurance_need" : local_df.loc[idx, "home_insurance_need"],
+                    "health_insurance_need" : local_df.loc[idx, "health_insurance_need"],
+                    "longterm_care_insurance_need" : local_df.loc[idx, "longterm_care_insurance_need"],
+                    "payment_financing_need" : local_df.loc[idx, "payment_financing_need"],
+                    "loan_financing_need" : local_df.loc[idx, "loan_financing_need"],
+                    "mortgage_financing_need" : local_df.loc[idx, "mortgage_financing_need"]
                 }
+            }
 
             people.append(person)
 
