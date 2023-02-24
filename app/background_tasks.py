@@ -4,8 +4,8 @@ from app.ingestion_customers import Customers
 
 def ingestor(df:pd.DataFrame):
 
-    ingestor = Customers()
-    response = ingestor.run(df=df)
+    ingestor = Customers(external_df=df)
+    response = ingestor.run()
     if response: return True
     else: return False
 
