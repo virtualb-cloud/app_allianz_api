@@ -68,7 +68,8 @@ class Advisors:
         # 1) calculate qualification index
 
         self.initialized_df["qualification_index"] = self.initialized_df["QUALIFICA"].apply(lambda x: 1 if x == "PROMOTORE" else 0)
-        
+        self.initialized_df["qualification_index"] = self.initialized_df["qualification_index"].fillna(0)
+
         # 2) calculate classification index
 
         bin_size = 3
@@ -83,6 +84,8 @@ class Advisors:
             elif row["FLAG_PRIVATE"] == 1: self.initialized_df.loc[idx, "classification_index"] = bins[0]
             
             else: self.initialized_df.loc[idx, "classification_index"] = 0
+
+        self.initialized_df["classification_index"] = self.initialized_df["classification_index"].fillna(0)
 
         response = self.insert_db(df=self.initialized_df)
         print(response)
