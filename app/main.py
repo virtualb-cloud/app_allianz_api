@@ -17,18 +17,21 @@ def ingestion_positions():
     if request.method == "POST":
 
         try:
-            uploaded_file = request.files["positions"]
-            print("yes")
-            z = ZipFile(io.BytesIO(uploaded_file))
-            print("yes")
-            z.extractall() 
-            print("yes")
-            # uploaded_file.save(uploaded_file.filename)
+            file = request.files['positions']  
+
+            file_like_object = file.stream._file  
+            zipfile_ob = ZipFile(file_like_object)
+            file_names = zipfile_ob.namelist()
+            
+            # Filter names to only include the filetype that you want:
+            file_names = [file_name for file_name in file_names if file_name.endswith(".csv")]
+            files = [(zipfile_ob.open(name).read(), name) for name in file_names]
+            
         except:
             return jsonify("file can not be read, please send the zip file with 'positions' tag"), 422
 
         try:
-            uploaded_file = pd.read_csv("work_posizioni.csv", delimiter=";", encoding="latin-1")
+            uploaded_file = pd.read_csv(files[0][0], delimiter=";", encoding="latin-1")
         except:
             return jsonify("file can not be read, 'encoding' or 'delimiter' has changed. "), 422
 
@@ -39,8 +42,5 @@ def ingestion_positions():
         thread = Thread(target=ingestor, args=(uploaded_file,))
         thread.daemon = True
         thread.start()
-
-        # remove the file
-        os.remove("work_posizioni.csv")
         
         return jsonify("ingestor worker started succesfully and will terminate in some minutes."), 200
