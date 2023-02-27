@@ -5,6 +5,8 @@ import pandas as pd
 from threading import Thread
 from app.ingestion_controller import Ingestion_controller
 from app.background_tasks import ingestor
+from zipfile import ZipFile
+import io
 
 # Config
 app = Flask(__name__)
@@ -17,7 +19,10 @@ def ingestion_positions():
         try:
             uploaded_file = request.files["positions"]
             name = uploaded_file.filename
-            uploaded_file.save(uploaded_file.filename)
+                
+            z = ZipFile(io.BytesIO(uploaded_file))
+            z.extractall() 
+            # uploaded_file.save(uploaded_file.filename)
         except:
             return jsonify("file can not be read, please send the csv file with 'positions' tag"), 422
 
