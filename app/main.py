@@ -37,12 +37,13 @@ def ingestion_positions():
         controller = Ingestion_controller()
         flag, errors = controller.run(uploaded_file_columns)
         if not flag: return errors, 422
-
+        print("yes")
         thread = Thread(
             target=ingestor, 
             args=(pd.read_csv(zipfile_ob.open(file_names[0]).read(), delimiter=";", encoding="latin-1")["SOGGETTO", "PROMOTORE", "COD_PROD", "COD_SOTTOPROD"].drop_duplicates(subset=["SOGGETTO", "PROMOTORE", "COD_PROD", "COD_SOTTOPROD"]),)
             )
+        print("yes")
         thread.daemon = True
         thread.start()
-        
+        print("yes")
         return jsonify("ingestor worker started succesfully and will terminate in some minutes."), 200
