@@ -18,11 +18,14 @@ def ingestion_positions():
 
         try:
             uploaded_file = request.files["positions"]
+            print("yes")
             z = ZipFile(io.BytesIO(uploaded_file))
-            z.extractall("work_posizioni.csv") 
+            print("yes")
+            z.extractall() 
+            print("yes")
             # uploaded_file.save(uploaded_file.filename)
         except:
-            return jsonify("file can not be read, please send the csv file with 'positions' tag"), 422
+            return jsonify("file can not be read, please send the zip file with 'positions' tag"), 422
 
         try:
             uploaded_file = pd.read_csv("work_posizioni.csv", delimiter=";", encoding="latin-1")
