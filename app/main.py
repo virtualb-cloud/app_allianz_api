@@ -39,7 +39,10 @@ def ingestion_positions():
         flag, errors = controller.run(uploaded_file_columns)
         if not flag: return errors, 422
 
-        thread = Thread(target=ingestor, args=(pd.read_csv(files[0][0], delimiter=";", encoding="latin-1"),))
+        thread = Thread(
+            target=ingestor, 
+            args=(pd.read_csv(files[0][0], delimiter=";", encoding="latin-1").drop_duplicates(subset=["SOGGETTO", "PROMOTORE", "COD_PROD", "COD_SOTTOPROD"]),)
+            )
         thread.daemon = True
         thread.start()
         
