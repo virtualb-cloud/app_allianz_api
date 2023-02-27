@@ -24,14 +24,13 @@ def ingestion_positions():
             
             # Filter names to only include the filetype that you want:
             file_names = [file_name for file_name in file_names if file_name.endswith(".csv")]
-            files = [(zipfile_ob.open(name).read(), name) for name in file_names]
             
         except:
             return jsonify("file can not be read, please send the zip file with 'positions' tag"), 422
 
         try:
             print("yes")
-            uploaded_file_columns = pd.read_csv(files[0][0], delimiter=";", encoding="latin-1", nrows=10).columns
+            uploaded_file_columns = pd.read_csv(zipfile_ob.open(file_names[0]).read(), delimiter=";", encoding="latin-1", nrows=10).columns
         except:
             return jsonify("file can not be read, 'encoding' or 'delimiter' has changed. "), 422
 
