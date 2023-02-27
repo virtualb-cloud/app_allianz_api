@@ -6,7 +6,6 @@ from threading import Thread
 from app.ingestion_controller import Ingestion_controller
 from app.background_tasks import ingestor
 from zipfile import ZipFile
-import io
 
 # Config
 app = Flask(__name__)
@@ -31,15 +30,16 @@ def ingestion_positions():
             return jsonify("file can not be read, please send the zip file with 'positions' tag"), 422
 
         try:
-            uploaded_file = pd.read_csv(files[0][0], delimiter=";", encoding="latin-1")
+            print("yes")
+            uploaded_file_columns = pd.read_csv(files[0][0], delimiter=";", encoding="latin-1", nrows=10).columns
         except:
             return jsonify("file can not be read, 'encoding' or 'delimiter' has changed. "), 422
 
         controller = Ingestion_controller()
-        flag, errors = controller.run(uploaded_file)
+        flag, errors = controller.run(uploaded_file_columns)
         if not flag: return errors, 422
 
-        thread = Thread(target=ingestor, args=(uploaded_file,))
+        thread = Thread(target=ingestor, args=(pd.read_csv(files[0][0], delimiter=";", encoding="latin-1"),))
         thread.daemon = True
         thread.start()
         

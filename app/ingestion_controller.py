@@ -21,9 +21,9 @@ class Ingestion_controller:
             "DATA_RIFERIMENTO" : "string",
             }
 
-    def run(self, df:pd.DataFrame):
+    def run(self, columns:pd.Series):
         
-        columns = df.columns
+        columns = columns
         
         flag = True
         errors = ""
