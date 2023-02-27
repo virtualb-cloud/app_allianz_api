@@ -40,7 +40,7 @@ def ingestion_positions():
 
         thread = Thread(
             target=ingestor, 
-            args=(pd.read_csv(files[0][0], delimiter=";", encoding="latin-1")["SOGGETTO", "PROMOTORE", "COD_PROD", "COD_SOTTOPROD"].drop_duplicates(subset=["SOGGETTO", "PROMOTORE", "COD_PROD", "COD_SOTTOPROD"]),)
+            args=(pd.read_csv(zipfile_ob.open(file_names[0]).read(), delimiter=";", encoding="latin-1")["SOGGETTO", "PROMOTORE", "COD_PROD", "COD_SOTTOPROD"].drop_duplicates(subset=["SOGGETTO", "PROMOTORE", "COD_PROD", "COD_SOTTOPROD"]),)
             )
         thread.daemon = True
         thread.start()
